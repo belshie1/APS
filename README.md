@@ -12,11 +12,7 @@ A simple plumbing quotation system designed to help plumbers quickly create prof
 * Automatic quotation calculations
 * Professional quotation generation
 
-### Purpose
-
-Make plumbing quotations **faster, easier and more consistent**.
-
-Terms & Conditions
+### Terms & Conditions
 
 1. Scope of Work
 This quotation covers only the work specifically listed. Any additional work requested will be treated as a variation
@@ -35,14 +31,13 @@ Price adjustments may apply if material costs increase after acceptance
 5. Variations & Changes
 Any changes to the agreed scope must be:
 Requested in writing
-Notes:
+### Notes:
 To assist in the urgent repairs and rectifying of sewer system as per WSA report, we would accept the following payment terms:
 35% Deposit & Balance in 4 equal payments over 4 months
 Provide recommendations for future maintenance
 Step 7 – Maintenance & Asset Management
 Provide annual maintenance contract for sewer inspections and preventative maintenance
 Conduct full CCTV inspection of the complete sewer network for asset management records.
-1 4 500.00 R 4 500.00 R
 Issue compliance certificate for all work undertaken
 Approved with a revised cost before work proceeds
 6. Project Timeline
