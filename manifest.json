@@ -1,0 +1,25 @@
+{
+    "name": "Pipewise Quote Calculator",
+    "short_name": "Pipewise",
+    "description": "Offline plumbing quotation and pricing calculator",
+    "start_url": "./",
+    "scope": "./",
+    "display": "standalone",
+    "orientation": "portrait-primary",
+    "background_color": "#f4f8fc",
+    "theme_color": "#123b70",
+    "icons": [
+        {
+            "src": "icons/icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "icons/icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ]
+}

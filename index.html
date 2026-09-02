@@ -1,0 +1,300 @@
+<!doctype html>
+<html lang="en-ZA">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0757b8">
+    <meta name="description" content="Offline plumbing quote and pricing calculator">
+    <meta name="theme-color" content="#123b70">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Pipewise">
+    <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" href="styles.css">
+    <title>APS | Quote calculator</title>
+    <link rel="manifest" href="manifest.json">
+
+</head>
+
+<body>
+    <div class="app-shell">
+        <aside class="sidebar">
+            <div class="brand"><img class="brand-logo" src="APSLOGO.jpeg" alt="APS Architectural Plumbing Services">
+            </div>
+            <div class="sidebar-kicker">FIELD QUOTING / 01</div>
+            <nav class="nav" aria-label="Main navigation">
+                <button class="nav-item active" data-view="new-quote"><span class="nav-icon">+</span> New quote</button>
+                <button class="nav-item" data-view="quotes"><span class="nav-icon">▤</span> Saved quotes <span
+                        class="nav-count" id="quote-count">0</span></button>
+                <button class="nav-item" data-view="settings"><span class="nav-icon">⌘</span> Company settings</button>
+                <button class="nav-item" data-view="price-list"><span class="nav-icon">▥</span> Price list</button>
+            </nav>
+            <div class="sidebar-footer"><span class="status-dot"></span><span>Works offline</span></div>
+        </aside>
+
+        <main class="main-content">
+            <header class="topbar">
+                <div>
+                    <div class="eyebrow">PLUMBING OPERATIONS</div>
+                    <h1 id="page-title">New quote</h1>
+                </div>
+                <div class="top-actions"><span class="quote-id" id="quote-number">PW-2026-001</span><button
+                        class="clear-quote-top" id="clear-quote-top" title="Clear quote" aria-label="Clear quote">Clear
+                        quote</button><button class="icon-button" id="print-button" title="View quote as PDF"
+                        aria-label="View quote as PDF">⤓</button>
+                </div>
+            </header>
+
+            <section id="new-quote-view" class="view active-view">
+                <div class="workspace-grid">
+                    <div class="form-column">
+                        <section class="section-block customer-section">
+                            <div class="section-heading">
+                                <div><span class="section-number">01</span>
+                                    <h2>Customer details</h2>
+                                </div><span class="required-note">Required</span>
+                            </div>
+                            <div class="field-grid">
+                                <label class="field field-wide"><span>Customer name</span><input id="customer-name"
+                                        type="text" placeholder="e.g. Thandi Mokoena"></label>
+                                <label class="field"><span>Phone number</span><input id="customer-phone" type="tel"
+                                        placeholder="082 000 0000"></label>
+                                <label class="field field-wide"><span>Service address</span><textarea
+                                        id="customer-address" rows="2"
+                                        placeholder="Street address, suburb, city"></textarea></label>
+                            </div>
+                        </section>
+
+                        <section class="section-block">
+                            <div class="section-heading">
+                                <div><span class="section-number">02</span>
+                                    <h2>Labour & call-out</h2>
+                                </div><span class="unit-label">ZAR / RAND</span>
+                            </div>
+                            <div class="field-grid labour-grid">
+                                <label class="field"><span>Call-out fee / each</span>
+                                    <div class="input-prefix"><b>R</b><input id="callout" type="number" min="0"
+                                            step="0.01" value="650"></div>
+                                </label>
+                                <label class="field"><span>Main plumber / hour</span>
+                                    <div class="input-prefix"><b>R</b><input id="plumber-hourly-rate" type="number"
+                                            min="0" step="0.01" value="500"></div>
+                                </label>
+                                <label class="field"><span>Extra worker / hour</span>
+                                    <div class="input-prefix"><b>R</b><input id="extra-worker-hourly-rate" type="number"
+                                            min="0" step="0.01" value="350"></div>
+                                </label>
+                                <label class="field"><span>Hours worked</span><input id="hours-worked" type="number"
+                                        min="0" step="0.25" value="8"></label>
+                                <label class="field"><span>Extra workers</span><input id="extra-workers" type="number"
+                                        min="0" step="1" value="0"></label>
+                            </div>
+                            <div class="inline-total"><span>Labour & call-out total</span><strong id="labour-total">R
+                                    2,150.00</strong></div>
+                        </section>
+
+                        <section class="section-block materials-block">
+                            <div class="section-heading">
+                                <div><span class="section-number">03</span>
+                                    <h2>Materials</h2>
+                                </div>
+                                <div class="material-actions"><a class="catalogue-link"
+                                        href="https://www.plumblink.co.za/all-products" target="_blank"
+                                        rel="noopener">Check Plumblink prices ↗</a><button class="text-button"
+                                        id="add-material"><span>+</span> Add item</button></div>
+                            </div>
+                            <p class="material-note">Choose a category, then the item type and size. Prices are
+                                reference prices and can be updated.</p>
+                            <div class="supplier-tabs" role="tablist" aria-label="Supplier price source">
+                                <button class="supplier-tab active" data-supplier="plumblink"
+                                    role="tab">Plumblink</button>
+                                <button class="supplier-tab" data-supplier="builders" role="tab">Builders</button>
+                                <button class="supplier-tab" data-supplier="bathroom" role="tab">Bathroom
+                                    Bizarre</button>
+                            </div>
+                            <div class="supplier-source" id="supplier-source">Prices shown from Plumblink reference
+                                catalogue · <a href="https://www.plumblink.co.za/all-products" target="_blank"
+                                    rel="noopener">Open supplier ↗</a></div>
+                            <div class="price-check-bar"><span id="price-check-status">Morning price check not
+                                    run</span><button class="check-prices-button" id="check-prices-button">Check prices
+                                    now ↗</button></div>
+                            <div class="material-headings" aria-hidden="true"><span>Category</span><span>Item
+                                    type</span><span>Size</span><span>Qty</span><span>Cost</span><span>Markup</span><span>Selling
+                                    price</span><span></span></div>
+                            <div class="material-list" id="material-list"></div>
+                            <div class="material-empty" id="material-empty">No materials added yet. Add parts used for
+                                this job.</div>
+                        </section>
+                        <section class="scenario-panel" aria-labelledby="scenario-title">
+                            <div><span class="eyebrow">QUICK START</span>
+                                <h2 id="scenario-title">Job scenarios</h2>
+                                <p>Start with a common job, then remove anything you do not need.</p>
+                            </div>
+                            <div class="scenario-controls"><select id="scenario-select" aria-label="Job scenario">
+                                    <option value="">Select a job scenario</option>
+                                    <option value="underground-pipe">Replace underground pipe</option>
+                                    <option value="blocked-drain">Unblock drain or sewer</option>
+                                    <option value="geyser-install">Install geyser</option>
+                                    <option value="bathroom-install">Bathroom installation</option>
+                                    <option value="leak-repair">Repair water leak</option>
+                                    <option value="wall-leak">Repair leak inside wall</option>
+                                    <option value="floor-leak">Repair leak under floor</option>
+                                    <option value="replace-toilet">Replace toilet</option>
+                                    <option value="install-toilet">Install new toilet</option>
+                                    <option value="replace-basin">Replace basin</option>
+                                    <option value="replace-bath">Replace bath</option>
+                                    <option value="replace-shower">Replace shower</option>
+                                    <option value="unblock-toilet">Unblock toilet</option>
+                                    <option value="unblock-sewer">Unblock sewer line</option>
+                                    <option value="collapsed-sewer">Collapsed sewer pipe</option>
+                                    <option value="main-water-pipe">Replace main water pipe</option>
+                                    <option value="outside-tap">Install outside tap</option>
+                                    <option value="water-meter">Replace water meter</option>
+                                    <option value="geyser-leak">Repair geyser leak</option>
+                                    <option value="geyser-element">Replace geyser element</option>
+                                    <option value="pressure-pump">Install pressure pump</option>
+                                    <option value="excavation-only">Plumbing excavation only</option>
+                                    <option value="paving-access">Access pipe under paving</option>
+                                    <option value="concrete-access">Access pipe under concrete</option>
+                                </select><button class="primary-button compact" id="add-scenario">Add scenario</button>
+                            </div>
+                        </section>
+                        <section class="section-block services-block">
+                            <div class="section-heading">
+                                <div><span class="section-number">04</span>
+                                    <h2>Services & site work</h2>
+                                </div><button class="text-button" id="add-service"><span>+</span> Add service</button>
+                            </div>
+                            <p class="material-note">Add physical work separately from materials, such as excavation,
+                                restoration, cleaning, or equipment.</p>
+                            <div class="material-headings service-headings" aria-hidden="true">
+                                <span>Category</span><span>Task</span><span>Unit</span><span>Qty</span><span>Rate</span><span>Total</span><span></span>
+                            </div>
+                            <div class="service-list" id="service-list"></div>
+                            <div class="material-empty" id="service-empty">No additional services added yet.</div>
+                        </section>
+                    </div>
+
+                    <aside class="summary-card">
+                        <div class="company-print-header">
+                            <img src="APSLOGO.jpeg" alt="APS Architectural Plumbing Services">
+                            <span>ARCHITECTURAL PLUMBING SERVICES</span>
+                            <small>Reg No: 2025/816148/07<br>Unit 7, Central Lake Factory Park<br>5 Louis Friedman
+                                Street, Factoria, Krugersdorp</small>
+                            <div class="company-contact-print"><b>OFFICE</b><br>Prepared by: <span
+                                    id="print-prepared-by">Cheyenne</span><br>Contact: <span id="print-contact">076 705
+                                    8718</span><br>Email: <span
+                                    id="print-email">cheyenne@agasouthafrica.co.za</span><br>Tax reference: <span
+                                    id="print-tax-number">105 976 616</span></div>
+                        </div>
+                        <div class="summary-top"><span class="eyebrow">QUOTE SUMMARY</span><span class="summary-date"
+                                id="quote-date"></span></div>
+                        <div class="summary-customer" id="summary-customer">New customer</div>
+                        <div class="summary-address" id="summary-address">Add a service address</div>
+                        <div class="print-details" id="print-details"></div>
+                        <div class="summary-lines">
+                            <div><span>Call-out</span><strong id="summary-callout">R 650.00</strong></div>
+                            <div><span>Labour</span><strong id="summary-labour">R 1,500.00</strong></div>
+                            <div><span>Materials</span><strong id="summary-materials">R 0.00</strong></div>
+                            <div><span>Services & site work</span><strong id="summary-services">R 0.00</strong></div>
+                        </div>
+                        <div class="vat-row"><label class="switch-label"><input id="vat-enabled" type="checkbox"
+                                    checked><span class="switch"></span> Include VAT</label><span
+                                id="vat-rate-label">15%</span></div>
+                        <div class="grand-total"><span>Total incl. VAT</span><strong id="grand-total">R
+                                2,472.50</strong></div>
+                        <button class="pdf-button" id="pdf-button"><span>View / save as
+                                PDF</span><span>⤓</span></button>
+                        <button class="primary-button" id="save-quote"><span>Save quote</span><span>→</span></button>
+                        <button class="secondary-button" id="clear-quote">Clear form</button>
+                        <p class="summary-footnote">Prices are calculated in South African Rand. VAT is applied to the
+                            subtotal.</p>
+                    </aside>
+                </div>
+            </section>
+
+            <section id="quotes-view" class="view">
+                <div class="view-intro">
+                    <div><span class="eyebrow">YOUR LOCAL ARCHIVE</span>
+                        <h2>Saved quotes</h2>
+                    </div><button class="primary-button compact" id="new-quote-button">+ New quote</button>
+                </div>
+                <div id="saved-quotes" class="saved-quotes"></div>
+            </section>
+
+            <section id="settings-view" class="view">
+                <div class="view-intro">
+                    <div><span class="eyebrow">BUSINESS PROFILE</span>
+                        <h2>Company settings</h2>
+                    </div><button class="primary-button compact" id="save-settings">Save settings</button>
+                </div>
+                <div class="settings-panel"><label class="field"><span>Company name</span><input id="company-name"
+                            type="text" placeholder="Your plumbing business"></label><label class="field"><span>Phone
+                            number</span><input id="company-phone" type="tel" placeholder="011 000 0000"></label><label
+                        class="field"><span>Email address</span><input id="company-email" type="email"
+                            placeholder="hello@yourbusiness.co.za"></label><label class="field"><span>VAT rate
+                            (%)</span><input id="vat-rate" type="number" min="0" max="100" step="0.5"
+                            value="15"></label><label class="field"><span>Prepared by</span><input id="prepared-by"
+                            type="text" placeholder="Cheyenne"></label><label class="field"><span>Tax
+                            reference</span><input id="tax-number" type="text" placeholder="105 976 616"></label></div>
+            </section>
+
+            <section id="price-list-view" class="view">
+                <div class="view-intro">
+                    <div><span class="eyebrow">MASTER PRICING</span>
+                        <h2>Price list</h2>
+                        <p class="view-note">Update the contractor rates used by services and job scenarios.</p>
+                    </div>
+                    <div class="price-list-actions"><button class="secondary-button compact add-price-button"
+                            id="add-price">+ Add price</button><label class="import-price-button">Import Excel<input
+                                id="price-list-file-page" type="file" accept=".xlsx,.xls"
+                                aria-label="Import Excel price list"></label><button class="primary-button compact"
+                            id="save-price-list">Save prices</button></div>
+                </div>
+                <div class="price-list-toolbar"><input id="price-list-search" type="search"
+                        placeholder="Search items..." aria-label="Search price list"><span id="price-list-count"></span>
+                </div>
+                <div class="price-list-table-wrap">
+                    <table class="price-list-table">
+                        <thead>
+                            <tr>
+                                <th>Category</th>
+                                <th>Type / unit</th>
+                                <th>Line item</th>
+                                <th>Price (ZAR)</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="price-list-body"></tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+    <div class="toast" id="toast" role="status"></div>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script src="app.js"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./service-worker.js')
+                    .then(registration => {
+                        console.log(
+                            'Pipewise service worker registered:',
+                            registration.scope
+                        );
+                    })
+                    .catch(error => {
+                        console.error(
+                            'Pipewise service worker registration failed:',
+                            error
+                        );
+                    });
+            });
+        }
+    </script>
+
+</body>
+
+</html>
