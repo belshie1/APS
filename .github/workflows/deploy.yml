@@ -13,7 +13,7 @@ permissions:
   id-token: write
 
 concurrency:
-  group: pages
+  group: "pages"
   cancel-in-progress: true
 
 jobs:
@@ -26,17 +26,29 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
+      # ---------------------------------------------------------
+      # Get the APS website files
+      # ---------------------------------------------------------
       - name: Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
+      # ---------------------------------------------------------
+      # Configure GitHub Pages
+      # ---------------------------------------------------------
       - name: Configure GitHub Pages
-        uses: actions/configure-pages@v6
+        uses: actions/configure-pages@v5
 
-      - name: Upload website
+      # ---------------------------------------------------------
+      # Upload the website
+      # ---------------------------------------------------------
+      - name: Upload GitHub Pages artifact
         uses: actions/upload-pages-artifact@v4
         with:
-          path: .
+          path: '.'
 
+      # ---------------------------------------------------------
+      # Deploy
+      # ---------------------------------------------------------
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v5
+        uses: actions/deploy-pages@v4
