@@ -24,11 +24,12 @@
             </div>
             <div class="sidebar-kicker">FIELD QUOTING / 01</div>
             <nav class="nav" aria-label="Main navigation">
-                <button class="nav-item active" data-view="new-quote"><span class="nav-icon">+</span> New quote</button>
+                <button class="nav-item active" data-view="new-quote"><span class="nav-icon">+</span> Quote</button>
                 <button class="nav-item" data-view="quotes"><span class="nav-icon">▤</span> Saved quotes <span
                         class="nav-count" id="quote-count">0</span></button>
                 <button class="nav-item" data-view="settings"><span class="nav-icon">⌘</span> Company settings</button>
                 <button class="nav-item" data-view="price-list"><span class="nav-icon">▥</span> Price list</button>
+                <button class="nav-item" data-view="scenarios"><span class="nav-icon">☷</span> Scenarios</button>
             </nav>
             <div class="sidebar-footer"><span class="status-dot"></span><span>Works offline</span></div>
         </aside>
@@ -37,10 +38,11 @@
             <header class="topbar">
                 <div>
                     <div class="eyebrow">PLUMBING OPERATIONS</div>
-                    <h1 id="page-title">New quote</h1>
+                    <h1 id="page-title">Quote</h1>
                 </div>
-                <div class="top-actions"><span class="quote-id" id="quote-number">PW-2026-001</span><button
-                        class="clear-quote-top" id="clear-quote-top" title="Clear quote" aria-label="Clear quote">Clear
+                <div class="top-actions"><span class="quote-status" id="quote-status">NEW</span><span class="quote-id"
+                        id="quote-number">PW-2026-001</span><button class="clear-quote-top" id="clear-quote-top"
+                        title="Clear quote" aria-label="Clear quote">Clear
                         quote</button><button class="icon-button" id="print-button" title="View quote as PDF"
                         aria-label="View quote as PDF">⤓</button>
                 </div>
@@ -63,6 +65,16 @@
                                 <label class="field field-wide"><span>Service address</span><textarea
                                         id="customer-address" rows="2"
                                         placeholder="Street address, suburb, city"></textarea></label>
+                                <label class="field field-wide"><span>Description of requested services</span><textarea
+                                        id="service-description" rows="3"
+                                        placeholder="Describe the work the customer requested"></textarea></label>
+                                <div class="field field-wide photo-field"><span>Site photos</span>
+                                    <div class="photo-upload"><label class="photo-upload-button" for="site-photo">Upload
+                                            photos</label><input id="site-photo" type="file" accept="image/*" multiple
+                                            aria-label="Upload site photos"><span id="site-photo-status">No photos
+                                            selected</span></div>
+                                    <div class="site-photo-preview" id="site-photo-preview"></div>
+                                </div>
                             </div>
                         </section>
 
@@ -72,24 +84,10 @@
                                     <h2>Labour & call-out</h2>
                                 </div><span class="unit-label">ZAR / RAND</span>
                             </div>
-                            <div class="field-grid labour-grid">
-                                <label class="field"><span>Call-out fee / each</span>
-                                    <div class="input-prefix"><b>R</b><input id="callout" type="number" min="0"
-                                            step="0.01" value="650"></div>
-                                </label>
-                                <label class="field"><span>Main plumber / hour</span>
-                                    <div class="input-prefix"><b>R</b><input id="plumber-hourly-rate" type="number"
-                                            min="0" step="0.01" value="500"></div>
-                                </label>
-                                <label class="field"><span>Extra worker / hour</span>
-                                    <div class="input-prefix"><b>R</b><input id="extra-worker-hourly-rate" type="number"
-                                            min="0" step="0.01" value="350"></div>
-                                </label>
-                                <label class="field"><span>Hours worked</span><input id="hours-worked" type="number"
-                                        min="0" step="0.25" value="8"></label>
-                                <label class="field"><span>Extra workers</span><input id="extra-workers" type="number"
-                                        min="0" step="1" value="0"></label>
-                            </div>
+                            <div class="labour-headings" aria-hidden="true"><span>Line
+                                    item</span><span>Unit</span><span>Qty</span><span>Cost /
+                                    day</span><span>Total</span></div>
+                            <div class="labour-list" id="labour-list"></div>
                             <div class="inline-total"><span>Labour & call-out total</span><strong id="labour-total">R
                                     2,150.00</strong></div>
                         </section>
@@ -99,13 +97,12 @@
                                 <div><span class="section-number">03</span>
                                     <h2>Materials</h2>
                                 </div>
-                                <div class="material-actions"><a class="catalogue-link"
-                                        href="https://www.plumblink.co.za/all-products" target="_blank"
-                                        rel="noopener">Check Plumblink prices ↗</a><button class="text-button"
-                                        id="add-material"><span>+</span> Add item</button></div>
+                                <div class="material-actions"><button class="text-button"
+                                        id="add-material"><span>+</span>
+                                        Add material</button></div>
                             </div>
-                            <p class="material-note">Choose a category, then the item type and size. Prices are
-                                reference prices and can be updated.</p>
+                            <p class="material-note">Choose a category, material type, and size. Suppliers that list the
+                                item are shown.</p>
                             <div class="supplier-tabs" role="tablist" aria-label="Supplier price source">
                                 <button class="supplier-tab active" data-supplier="plumblink"
                                     role="tab">Plumblink</button>
@@ -118,9 +115,10 @@
                                     rel="noopener">Open supplier ↗</a></div>
                             <div class="price-check-bar"><span id="price-check-status">Morning price check not
                                     run</span><button class="check-prices-button" id="check-prices-button">Check prices
-                                    now ↗</button></div>
-                            <div class="material-headings" aria-hidden="true"><span>Category</span><span>Item
-                                    type</span><span>Size</span><span>Qty</span><span>Cost</span><span>Markup</span><span>Selling
+                                    now</button></div>
+                            <div class="material-headings" aria-hidden="true"><span>Category</span><span>Material
+                                    type</span><span>Size</span><span>Qty</span><span>Best
+                                    price</span><span>Markup</span><span>Selling
                                     price</span><span></span></div>
                             <div class="material-list" id="material-list"></div>
                             <div class="material-empty" id="material-empty">No materials added yet. Add parts used for
@@ -133,30 +131,40 @@
                             </div>
                             <div class="scenario-controls"><select id="scenario-select" aria-label="Job scenario">
                                     <option value="">Select a job scenario</option>
-                                    <option value="underground-pipe">Replace underground pipe</option>
-                                    <option value="blocked-drain">Unblock drain or sewer</option>
-                                    <option value="geyser-install">Install geyser</option>
-                                    <option value="bathroom-install">Bathroom installation</option>
-                                    <option value="leak-repair">Repair water leak</option>
-                                    <option value="wall-leak">Repair leak inside wall</option>
-                                    <option value="floor-leak">Repair leak under floor</option>
-                                    <option value="replace-toilet">Replace toilet</option>
-                                    <option value="install-toilet">Install new toilet</option>
-                                    <option value="replace-basin">Replace basin</option>
-                                    <option value="replace-bath">Replace bath</option>
-                                    <option value="replace-shower">Replace shower</option>
-                                    <option value="unblock-toilet">Unblock toilet</option>
-                                    <option value="unblock-sewer">Unblock sewer line</option>
-                                    <option value="collapsed-sewer">Collapsed sewer pipe</option>
-                                    <option value="main-water-pipe">Replace main water pipe</option>
-                                    <option value="outside-tap">Install outside tap</option>
-                                    <option value="water-meter">Replace water meter</option>
-                                    <option value="geyser-leak">Repair geyser leak</option>
-                                    <option value="geyser-element">Replace geyser element</option>
-                                    <option value="pressure-pump">Install pressure pump</option>
-                                    <option value="excavation-only">Plumbing excavation only</option>
-                                    <option value="paving-access">Access pipe under paving</option>
-                                    <option value="concrete-access">Access pipe under concrete</option>
+                                    <optgroup label="Drainage &amp; water supply">
+                                        <option value="underground-pipe">Replace underground pipe</option>
+                                        <option value="blocked-drain">Unblock drain or sewer</option>
+                                        <option value="unblock-toilet">Unblock toilet</option>
+                                        <option value="unblock-sewer">Unblock sewer line</option>
+                                        <option value="collapsed-sewer">Collapsed sewer pipe</option>
+                                        <option value="main-water-pipe">Replace main water pipe</option>
+                                        <option value="outside-tap">Install outside tap</option>
+                                        <option value="water-meter">Replace water meter</option>
+                                    </optgroup>
+                                    <optgroup label="Geysers &amp; pumps">
+                                        <option value="geyser-install">Install geyser</option>
+                                        <option value="geyser-leak">Repair geyser leak</option>
+                                        <option value="geyser-element">Replace geyser element</option>
+                                        <option value="pressure-pump">Install pressure pump</option>
+                                    </optgroup>
+                                    <optgroup label="Bathrooms &amp; fixtures">
+                                        <option value="bathroom-install">Bathroom installation</option>
+                                        <option value="replace-toilet">Replace toilet</option>
+                                        <option value="install-toilet">Install new toilet</option>
+                                        <option value="replace-basin">Replace basin</option>
+                                        <option value="replace-bath">Replace bath</option>
+                                        <option value="replace-shower">Replace shower</option>
+                                    </optgroup>
+                                    <optgroup label="Leaks &amp; access">
+                                        <option value="leak-repair">Repair water leak</option>
+                                        <option value="wall-leak">Repair leak inside wall</option>
+                                        <option value="floor-leak">Repair leak under floor</option>
+                                        <option value="paving-access">Access pipe under paving</option>
+                                        <option value="concrete-access">Access pipe under concrete</option>
+                                    </optgroup>
+                                    <optgroup label="Site work">
+                                        <option value="excavation-only">Plumbing excavation only</option>
+                                    </optgroup>
                                 </select><button class="primary-button compact" id="add-scenario">Add scenario</button>
                             </div>
                         </section>
@@ -173,6 +181,15 @@
                             </div>
                             <div class="service-list" id="service-list"></div>
                             <div class="material-empty" id="service-empty">No additional services added yet.</div>
+                        </section>
+                        <section class="section-block amendment-panel" id="amendment-panel" hidden>
+                            <div class="section-heading">
+                                <div><span class="section-number">05</span>
+                                    <h2>Amended quote</h2>
+                                </div><span class="unit-label">REQUIRED FOR REISSUE</span>
+                            </div>
+                            <label class="field"><span>Reason for amended quote</span><textarea id="amendment-reason"
+                                    rows="2" placeholder="Describe what changed in this quote"></textarea></label>
                         </section>
                     </div>
 
@@ -211,6 +228,64 @@
                         <p class="summary-footnote">Prices are calculated in South African Rand. VAT is applied to the
                             subtotal.</p>
                     </aside>
+                    <section class="quote-terms" aria-labelledby="terms-title">
+                        <header class="terms-header">
+                            <img src="APSLOGO.jpeg" alt="APS Architectural Plumbing Services">
+                            <div><span>APS ARCHITECTURAL PLUMBING SERVICES</span>
+                                <h2 id="terms-title">Terms &amp; Conditions</h2>
+                            </div>
+                        </header>
+                        <ol class="terms-list">
+                            <li><strong>Scope of work</strong><span>This quotation covers only the work specifically
+                                    listed. Any additional work requested will be treated as a variation and quoted
+                                    separately.</span></li>
+                            <li><strong>Validity of quote</strong><span>This quotation is valid for 30 days from the
+                                    date of issue. Prices may change thereafter because of material or labour cost
+                                    fluctuations.</span></li>
+                            <li><strong>Payment terms</strong><span>80% deposit is payable on acceptance for materials
+                                    and scheduling. The remaining 20% is payable on practical completion, before COC
+                                    handover where applicable. Late payments may incur interest charges.</span></li>
+                            <li><strong>Materials</strong><span>All materials are subject to availability. Where a
+                                    specified item is unavailable, an alternative will be presented to the client for
+                                    acceptance. Price adjustments may apply where material costs increase after
+                                    acceptance.</span></li>
+                            <li><strong>Variations and changes</strong><span>Any change to the agreed scope must be
+                                    requested in writing and approved at a revised cost before work proceeds.</span>
+                            </li>
+                            <li><strong>Project timeline</strong><span>Estimated timelines are provided in good faith
+                                    and may be affected by weather conditions, material delays, or client changes and
+                                    delays.</span></li>
+                            <li><strong>Access to site</strong><span>The client must provide reasonable access to the
+                                    site and ensure water, electricity, and necessary permissions are available.</span>
+                            </li>
+                            <li><strong>Health and safety</strong><span>All work will comply with applicable safety
+                                    regulations. The contractor is not responsible for pre-existing hazards that were
+                                    not disclosed.</span></li>
+                            <li><strong>Permits and approvals</strong><span>Unless stated otherwise, the client is
+                                    responsible for obtaining permits and approvals. Any related costs are excluded from
+                                    this quotation.</span></li>
+                            <li><strong>Workmanship warranty</strong><span>Workmanship is guaranteed for 12 months from
+                                    site handover. Product and material guarantees are available on request. The
+                                    warranty excludes normal wear and tear, misuse, lack of maintenance, and third-party
+                                    alterations.</span></li>
+                            <li><strong>Damage and liability</strong><span>The contractor will take reasonable care but
+                                    is not liable for hidden defects or structural issues not visible before work
+                                    begins. The client is advised to insure the property.</span></li>
+                            <li><strong>Cancellation</strong><span>Deposits may be non-refundable once materials have
+                                    been purchased or work has started. Cancellation must be made in writing.</span>
+                            </li>
+                            <li><strong>Cleanup</strong><span>Basic site cleanup is included. Full waste removal may be
+                                    quoted separately unless specifically included in the scope of work.</span></li>
+                        </ol>
+                        <section class="quote-acceptance" aria-labelledby="acceptance-title">
+                            <h3 id="acceptance-title">Acceptance of quotation</h3>
+                            <p>I/We hereby accept this quotation and agree to the terms and conditions stated above.
+                                I/We authorise the contractor to proceed with the work as specified.</p>
+                            <div class="acceptance-fields"><span>Client name</span><span>Company (if
+                                    applicable)</span><span>Signature</span><span>Date</span><span>Contact number</span>
+                            </div>
+                        </section>
+                    </section>
                 </div>
             </section>
 
@@ -270,8 +345,41 @@
                     </table>
                 </div>
             </section>
+
+            <section id="scenarios-view" class="view">
+                <div class="view-intro">
+                    <div><span class="eyebrow">SCENARIO TEMPLATES</span>
+                        <h2>Scenarios</h2>
+                        <p class="view-note">Choose a job scenario to edit the services added to a quote.</p>
+                    </div>
+                    <div class="price-list-actions"><button class="secondary-button compact" id="new-scenario">+ New
+                            scenario</button><button class="secondary-button compact" id="add-scenario-service">+ Add
+                            service</button><button class="primary-button compact" id="save-scenario">Save
+                            scenario</button></div>
+                </div>
+                <div class="scenario-editor">
+                    <label class="field scenario-editor-select"><span>Job scenario</span><select
+                            id="scenario-editor-select" aria-label="Scenario to edit"></select></label>
+                    <div class="scenario-service-headings" aria-hidden="true">
+                        <span>Category</span><span>Task</span><span>Unit</span><span>Qty</span><span>Rate</span><span>Total</span><span></span>
+                    </div>
+                    <div class="scenario-editor-list" id="scenario-editor-list"></div>
+                    <div class="material-empty" id="scenario-editor-empty">Select a scenario to edit its linked
+                        services.</div>
+                </div>
+            </section>
         </main>
     </div>
+    <dialog class="scenario-dialog" id="scenario-dialog" aria-labelledby="scenario-dialog-title">
+        <form id="scenario-form">
+            <h2 id="scenario-dialog-title">New scenario</h2>
+            <label class="field"><span>Scenario name</span><input id="new-scenario-name" type="text" maxlength="80"
+                    placeholder="e.g. Replace kitchen mixer" required></label>
+            <div class="scenario-dialog-actions"><button class="secondary-button compact" type="button"
+                    id="cancel-scenario">Cancel</button><button class="primary-button compact" type="submit">Create
+                    scenario</button></div>
+        </form>
+    </dialog>
     <div class="toast" id="toast" role="status"></div>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <script src="app.js"></script>
