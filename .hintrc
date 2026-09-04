@@ -4,5 +4,12 @@
   ],
   "hints": {
     "apple-touch-icons": "off"
-  }
+  },
+  "browserslist": [
+    "defaults",
+    "not ie 11",
+    "not and_ff <= 153",
+    "not firefox <= 154",
+    "not opera <= 131"
+  ]
 }

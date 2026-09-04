@@ -11,7 +11,7 @@
     <link rel="manifest" href="manifest.json">
     <link rel="stylesheet" href="styles.css">
 
-    <title>APS | Quote Calculator</title>
+    <title>Pipewise Quote Calculator</title>
 </head>
 
 <body>
@@ -1482,46 +1482,19 @@
 
     <script>
 
-        if (
-            'serviceWorker' in navigator &&
-            (
-                window.location.protocol === 'http:' ||
-                window.location.protocol === 'https:'
-            )
-        ) {
-
-            window.addEventListener('load', () => {
-
-                navigator.serviceWorker
-                    .register('./service-worker.js')
-
-                    .then(registration => {
-
-                        console.log(
-                            'APS service worker registered:',
-                            registration.scope
-                        );
-
-                    })
-
-                    .catch(error => {
-
-                        console.error(
-                            'APS service worker registration failed:',
-                            error
-                        );
-
-                    });
-
+        if ('serviceWorker' in navigator && window.isSecureContext) {
+            window.addEventListener('load', async () => {
+                try {
+                    const registration = await navigator.serviceWorker.register('./service-worker.js');
+                    console.log('Pipewise service worker registered:', registration.scope);
+                } catch (error) {
+                    console.error('Pipewise service worker registration failed:', error);
+                }
             });
-
         } else {
-
-            console.info(
-                'APS service worker skipped because the page is not running over HTTP/HTTPS.'
-            );
-
+            console.log('Pipewise service worker skipped: page is not running in a secure context.');
         }
+
 
     </script>
 
