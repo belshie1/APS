@@ -1,4 +1,3 @@
-```yaml
 name: Deploy Pipewise to GitHub Pages
 
 on:
@@ -27,17 +26,16 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
-      - name: Setup Pages
+      - name: Setup GitHub Pages
         uses: actions/configure-pages@v5
 
-      - name: Upload Pipewise
-        uses: actions/upload-pages-artifact@v3
+      - name: Upload Pipewise website
+        uses: actions/upload-pages-artifact@v4
         with:
           path: .
 
-      - name: Deploy to GitHub Pages
+      - name: Deploy Pipewise
         id: deployment
         uses: actions/deploy-pages@v4
-```
