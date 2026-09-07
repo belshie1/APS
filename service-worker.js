@@ -1,4 +1,4 @@
-const CACHE_NAME = 'pipewise-v3';
+﻿const CACHE_NAME = 'aga-v1';
 
 const APP_FILES = [
     './',
@@ -6,7 +6,7 @@ const APP_FILES = [
     './styles.css',
     './app.js',
     './manifest.json',
-    './APSLOGO.jpeg'
+    './AGA_LOGO.png'
 ];
 
 self.addEventListener('install', event => {

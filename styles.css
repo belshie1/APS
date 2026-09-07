@@ -1,4 +1,4 @@
-:root {
+﻿:root {
     --ink: #123b70;
     --muted: #667891;
     --line: #d7e1ee;
@@ -6,7 +6,7 @@
     --white: #fff;
     --mint: #dcecff;
     --mint-strong: #82b5ed;
-    --coral: #0757b8;
+    --coral: #0e6ba8;
     --yellow: #f3c76a;
     --shadow: 0 18px 45px rgba(7, 87, 184, .12)
 }
@@ -516,7 +516,7 @@ h2 {
 
 .material-headings {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr 48px 90px 65px 110px 28px;
+    grid-template-columns: 1fr 1fr 1fr 52px 52px 40px 80px 58px 95px 28px;
     gap: 8px;
     padding: 0 8px 7px;
     color: var(--muted);
@@ -531,7 +531,7 @@ h2 {
 
 .service-headings,
 .service-row {
-    grid-template-columns: 1.3fr 2.2fr 65px 45px 80px 95px 28px
+    grid-template-columns: 1.3fr 2fr 60px 48px 48px 38px 70px 80px 28px
 }
 
 .service-group-label {
@@ -551,7 +551,7 @@ h2 {
 
 .material-row {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr 48px 90px 65px 110px 28px;
+    grid-template-columns: 1fr 1fr 1fr 52px 52px 40px 80px 58px 95px 28px;
     gap: 8px;
     align-items: center
 }
@@ -927,21 +927,21 @@ h2 {
     }
 
     .material-row {
-        grid-template-columns: 1fr 1fr 1fr 42px 80px 58px 95px 24px
+        grid-template-columns: 1fr 1fr 1fr 44px 44px 34px 66px 50px 80px 24px
     }
 
     .material-headings {
-        grid-template-columns: 1fr 1fr 1fr 42px 80px 58px 95px 24px
+        grid-template-columns: 1fr 1fr 1fr 44px 44px 34px 66px 50px 80px 24px
     }
 
     .service-headings,
     .service-row {
-        grid-template-columns: 1.3fr 2.2fr 60px 40px 70px 80px 24px
+        grid-template-columns: 1.3fr 2fr 55px 42px 42px 30px 58px 66px 24px
     }
 
     .scenario-service-headings,
     .scenario-editor-row {
-        grid-template-columns: 1.3fr 2.2fr 60px 40px 70px 80px 24px
+        grid-template-columns: 1.3fr 2fr 55px 42px 42px 30px 58px 66px 24px
     }
 
     .topbar {
@@ -976,12 +976,12 @@ h2 {
     }
 
     .material-row {
-        grid-template-columns: 1fr 1fr 1fr 32px 60px 45px 72px 20px;
+        grid-template-columns: 1fr 1fr 1fr 34px 34px 26px 50px 42px 66px 20px;
         gap: 4px
     }
 
     .material-headings {
-        grid-template-columns: 1fr 1fr 1fr 32px 60px 45px 72px 20px;
+        grid-template-columns: 1fr 1fr 1fr 34px 34px 26px 50px 42px 66px 20px;
         gap: 4px;
         font-size: 8px;
         padding-left: 4px;
@@ -990,12 +990,12 @@ h2 {
 
     .service-headings,
     .service-row {
-        grid-template-columns: 1.15fr 1.85fr 50px 32px 60px 65px 20px
+        grid-template-columns: 1.15fr 1.7fr 48px 36px 36px 24px 46px 55px 20px
     }
 
     .scenario-service-headings,
     .scenario-editor-row {
-        grid-template-columns: 1.15fr 1.85fr 50px 32px 60px 65px 20px
+        grid-template-columns: 1.15fr 1.7fr 48px 36px 36px 24px 46px 55px 20px
     }
 
     .scenario-service-headings {
@@ -1491,7 +1491,7 @@ h2 {
 .scenario-service-headings,
 .scenario-editor-row {
     display: grid;
-    grid-template-columns: 1.3fr 2.2fr 65px 45px 80px 95px 28px;
+    grid-template-columns: 1.3fr 2fr 60px 48px 48px 38px 70px 80px 28px;
     gap: 8px;
     align-items: center
 }

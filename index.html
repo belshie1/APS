@@ -6,12 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <meta name="theme-color" content="#123b70">
-    <meta name="description" content="Offline plumbing quote and pricing calculator">
+    <meta name="description" content="Offline glass and aluminium quote and pricing calculator">
 
     <link rel="manifest" href="manifest.json">
     <link rel="stylesheet" href="styles.css">
 
-    <title>Pipewise Quote Calculator</title>
+    <title>AGA Quote Calculator</title>
 </head>
 
 <body>
@@ -25,7 +25,7 @@
         <aside class="sidebar">
 
             <div class="brand">
-                <img class="brand-logo" src="APSLOGO.jpeg" alt="APS Architectural Plumbing Services">
+                <img class="brand-logo" src="AGA_LOGO.png" alt="AGA Architectural Glass & Aluminium">
             </div>
 
             <div class="sidebar-kicker">
@@ -84,7 +84,7 @@
 
                 <div>
                     <div class="eyebrow">
-                        PLUMBING OPERATIONS
+                        GLASS & ALUMINIUM OPERATIONS
                     </div>
 
                     <h1 id="page-title">
@@ -99,7 +99,7 @@
                     </span>
 
                     <span class="quote-id" id="quote-number">
-                        PW-2026-001
+                        AGA-2026-001
                     </span>
 
                     <button class="clear-quote-top" id="clear-quote-top" title="Clear quote" aria-label="Clear quote"
@@ -264,6 +264,8 @@
                             <div class="labour-headings" aria-hidden="true">
                                 <span>Line item</span>
                                 <span>Unit</span>
+                                <span>Width (mm)</span>
+                                <span>Height (mm)</span>
                                 <span>Qty</span>
                                 <span>Cost / day</span>
                                 <span>Total</span>
@@ -328,26 +330,26 @@
 
                             <div class="supplier-tabs" role="tablist" aria-label="Supplier price source">
 
-                                <button class="supplier-tab active" data-supplier="plumblink" role="tab" type="button">
-                                    Plumblink
+                                <button class="supplier-tab active" data-supplier="pg" role="tab" type="button">
+                                    PG Glass
                                 </button>
 
-                                <button class="supplier-tab" data-supplier="builders" role="tab" type="button">
-                                    Builders
+                                <button class="supplier-tab" data-supplier="glassfit" role="tab" type="button">
+                                    Glassfit
                                 </button>
 
-                                <button class="supplier-tab" data-supplier="bathroom" role="tab" type="button">
-                                    Bathroom Bizarre
+                                <button class="supplier-tab" data-supplier="wispeco" role="tab" type="button">
+                                    Wispeco Aluminium
                                 </button>
 
                             </div>
 
 
                             <div class="supplier-source" id="supplier-source">
-                                Prices shown from Plumblink reference
+                                Prices shown from PG Glass reference
                                 catalogue ·
 
-                                <a href="https://www.plumblink.co.za/all-products" target="_blank"
+                                <a href="https://www.pgglass.co.za/" target="_blank"
                                     rel="noopener noreferrer">
                                     Open supplier ↗
                                 </a>
@@ -375,6 +377,8 @@
                                 <span>Category</span>
                                 <span>Material type</span>
                                 <span>Size</span>
+                                <span>Width (mm)</span>
+                                <span>Height (mm)</span>
                                 <span>Qty</span>
                                 <span>Best price</span>
                                 <span>Markup</span>
@@ -426,123 +430,66 @@
                                         Select a job scenario
                                     </option>
 
+                                    <optgroup label="Shopfronts &amp; entrances">
 
-                                    <optgroup label="Drainage &amp; water supply">
-
-                                        <option value="underground-pipe">
-                                            Replace underground pipe
+                                        <option value="shopfront-glass">
+                                            Shopfront glass replacement
                                         </option>
 
-                                        <option value="blocked-drain">
-                                            Unblock drain or sewer
-                                        </option>
-
-                                        <option value="unblock-toilet">
-                                            Unblock toilet
-                                        </option>
-
-                                        <option value="unblock-sewer">
-                                            Unblock sewer line
-                                        </option>
-
-                                        <option value="collapsed-sewer">
-                                            Collapsed sewer pipe
-                                        </option>
-
-                                        <option value="main-water-pipe">
-                                            Replace main water pipe
-                                        </option>
-
-                                        <option value="outside-tap">
-                                            Install outside tap
-                                        </option>
-
-                                        <option value="water-meter">
-                                            Replace water meter
+                                        <option value="shopfront-doors">
+                                            New aluminium shopfront &amp; doors
                                         </option>
 
                                     </optgroup>
 
+                                    <optgroup label="Windows &amp; doors">
 
-                                    <optgroup label="Geysers &amp; pumps">
-
-                                        <option value="geyser-install">
-                                            Install geyser
+                                        <option value="aluminium-window">
+                                            Aluminium window installation
                                         </option>
 
-                                        <option value="geyser-leak">
-                                            Repair geyser leak
+                                        <option value="sliding-door">
+                                            Aluminium sliding door
                                         </option>
 
-                                        <option value="geyser-element">
-                                            Replace geyser element
+                                        <option value="window-bank">
+                                            Window bank re-glazing
                                         </option>
 
-                                        <option value="pressure-pump">
-                                            Install pressure pump
-                                        </option>
-
-                                    </optgroup>
-
-
-                                    <optgroup label="Bathrooms &amp; fixtures">
-
-                                        <option value="bathroom-install">
-                                            Bathroom installation
-                                        </option>
-
-                                        <option value="replace-toilet">
-                                            Replace toilet
-                                        </option>
-
-                                        <option value="install-toilet">
-                                            Install new toilet
-                                        </option>
-
-                                        <option value="replace-basin">
-                                            Replace basin
-                                        </option>
-
-                                        <option value="replace-bath">
-                                            Replace bath
-                                        </option>
-
-                                        <option value="replace-shower">
-                                            Replace shower
+                                        <option value="broken-window">
+                                            Broken window replacement
                                         </option>
 
                                     </optgroup>
 
+                                    <optgroup label="Interiors &amp; bathrooms">
 
-                                    <optgroup label="Leaks &amp; access">
-
-                                        <option value="leak-repair">
-                                            Repair water leak
+                                        <option value="shower-enclosure">
+                                            Shower glass enclosure
                                         </option>
 
-                                        <option value="wall-leak">
-                                            Repair leak inside wall
-                                        </option>
-
-                                        <option value="floor-leak">
-                                            Repair leak under floor
-                                        </option>
-
-                                        <option value="paving-access">
-                                            Access pipe under paving
-                                        </option>
-
-                                        <option value="concrete-access">
-                                            Access pipe under concrete
+                                        <option value="mirror-install">
+                                            Mirror installation
                                         </option>
 
                                     </optgroup>
 
+                                    <optgroup label="Balustrades &amp; safety">
 
-                                    <optgroup label="Site work">
+                                        <option value="balustrade">
+                                            Glass balustrade installation
+                                        </option>
 
-                                        <option value="excavation-only">
-                                            Plumbing excavation only
+                                    </optgroup>
+
+                                    <optgroup label="Repairs">
+
+                                        <option value="glass-replacement">
+                                            Glass panel replacement
+                                        </option>
+
+                                        <option value="frame-only">
+                                            Aluminium frame supply &amp; fit
                                         </option>
 
                                     </optgroup>
@@ -596,6 +543,8 @@
                                 <span>Category</span>
                                 <span>Task</span>
                                 <span>Unit</span>
+                                <span>Width (mm)</span>
+                                <span>Height (mm)</span>
                                 <span>Qty</span>
                                 <span>Rate</span>
                                 <span>Total</span>
@@ -664,10 +613,10 @@
 
                         <div class="company-print-header">
 
-                            <img src="APSLOGO.jpeg" alt="APS Architectural Plumbing Services">
+                            <img src="AGA_LOGO.png" alt="AGA Architectural Glass & Aluminium">
 
                             <span>
-                                ARCHITECTURAL PLUMBING SERVICES
+                                AGA ARCHITECTURAL GLASS & ALUMINIUM
                             </span>
 
                             <small>
@@ -866,12 +815,12 @@
 
                         <header class="terms-header">
 
-                            <img src="APSLOGO.jpeg" alt="APS Architectural Plumbing Services">
+                            <img src="AGA_LOGO.png" alt="AGA Architectural Glass & Aluminium">
 
                             <div>
 
                                 <span>
-                                    APS ARCHITECTURAL PLUMBING SERVICES
+                                    AGA ARCHITECTURAL GLASS & ALUMINIUM
                                 </span>
 
                                 <h2 id="terms-title">
@@ -1103,11 +1052,39 @@
                     </div>
 
 
-                    <button class="primary-button compact" id="new-quote-button" type="button">
-                        + New quote
-                    </button>
+                    <div class="view-intro-actions">
+
+                        <button class="primary-button compact" id="export-quotes-button" type="button">
+                            Save to file
+                        </button>
+
+                        <button class="primary-button compact" id="import-quotes-button" type="button">
+                            Load from file
+                        </button>
+
+                        <button class="primary-button compact" id="google-signin-button" type="button">
+                            Sign in to Google
+                        </button>
+
+                        <button class="primary-button compact" id="drive-save-button" type="button" hidden>
+                            Save to Drive
+                        </button>
+
+                        <button class="primary-button compact" id="drive-load-button" type="button" hidden>
+                            Load from Drive
+                        </button>
+
+                        <button class="primary-button compact" id="new-quote-button" type="button">
+                            + New quote
+                        </button>
+
+                    </div>
 
                 </div>
+
+                <p class="drive-status" id="drive-status" style="margin: 0 0 12px; font-size: 13px; opacity: .7;"></p>
+
+                <input type="file" id="import-quotes-file" accept="application/json,.json" hidden>
 
 
                 <div id="saved-quotes" class="saved-quotes"></div>
@@ -1425,7 +1402,7 @@
                     Scenario name
                 </span>
 
-                <input id="new-scenario-name" type="text" maxlength="80" placeholder="e.g. Replace kitchen mixer"
+                <input id="new-scenario-name" type="text" maxlength="80" placeholder="e.g. Install shopfront glass"
                     required>
 
             </label>
@@ -1467,12 +1444,14 @@
          APS APPLICATION
          ========================================================= -->
 
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+
     <script src="app.js"></script>
 
 
     <!-- =========================================================
          SERVICE WORKER
-         
+
          The service worker is only registered when the application
          is running through HTTP or HTTPS.
 
