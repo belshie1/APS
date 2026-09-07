@@ -410,8 +410,12 @@ function updateDriveButtons() {
     $('drive-load-button').hidden = !signedIn;
 }
 
-function initGoogleSignIn() {
-    if (!window.google || !google.accounts || !google.accounts.oauth2) { setTimeout(initGoogleSignIn, 300); return; }
+function initGoogleSignIn(retries = 0) {
+    if (!window.google || !google.accounts || !google.accounts.oauth2) {
+        if (retries < 40) { setTimeout(() => initGoogleSignIn(retries + 1), 300); return; }
+        updateDriveStatus('Google sign-in library could not load — check your internet connection or ad blocker');
+        return;
+    }
     tokenClient = google.accounts.oauth2.initTokenClient({
         client_id: GOOGLE_CLIENT_ID,
         scope: 'https://www.googleapis.com/auth/drive.file email',
