@@ -16,10 +16,10 @@ const defaultLabourItems = () => [
 let labourItems = defaultLabourItems();
 let importedServiceRates = {};
 let settings = JSON.parse(localStorage.getItem('pipewise-settings') || '{}');
-settings.name ||= 'AGA Architectural Glass & Aluminium';
-settings.preparedBy ||= 'Cheyenne';
-settings.phone ||= '076 705 8718';
-settings.email ||= 'cheyenne@agasouthafrica.co.za';
+settings.name ||= 'Architectural Glass and Aluminium (Pty) Ltd';
+settings.preparedBy ||= 'Jan Myburgh';
+settings.phone ||= '010 597 6616';
+settings.email ||= 'info@agasouthafrica.co.za';
 settings.taxNumber ||= '105 976 616';
 let quotes = JSON.parse(localStorage.getItem('pipewise-quotes') || '[]');
 const glassCatalogue = {
@@ -537,7 +537,7 @@ function importQuotes(file) {
 
 function viewSavedQuotePdf(index) { loadQuote(index); requestAnimationFrame(() => window.print()); }
 function switchView(view) { document.querySelectorAll('.nav-item').forEach(item => item.classList.toggle('active', item.dataset.view === view)); document.querySelectorAll('.view').forEach(item => item.classList.remove('active-view')); $(`${view}-view`).classList.add('active-view'); $('page-title').textContent = view === 'new-quote' ? 'Quote' : view === 'quotes' ? 'Saved quotes' : view === 'price-list' ? 'Price list' : view === 'scenarios' ? 'Scenarios' : 'Company settings'; if (view === 'price-list') renderPriceList(); if (view === 'scenarios') renderScenarioEditor(); }
-function loadSettings() { $('company-name').value = settings.name || ''; $('company-phone').value = settings.phone || ''; $('company-email').value = settings.email || ''; $('prepared-by').value = settings.preparedBy || ''; $('tax-number').value = settings.taxNumber || ''; $('print-prepared-by').textContent = settings.preparedBy || 'Cheyenne'; $('print-contact').textContent = settings.phone || '076 705 8718'; $('print-email').textContent = settings.email || 'cheyenne@agasouthafrica.co.za'; $('print-tax-number').textContent = settings.taxNumber || '105 976 616'; $('vat-rate').value = settings.vatRate ?? VAT_DEFAULT; $('quote-date').textContent = new Date().toLocaleDateString('en-ZA', { day: '2-digit', month: 'short', year: 'numeric' }); }
+function loadSettings() { $('company-name').value = settings.name || ''; $('company-phone').value = settings.phone || ''; $('company-email').value = settings.email || ''; $('prepared-by').value = settings.preparedBy || ''; $('tax-number').value = settings.taxNumber || ''; $('print-prepared-by').textContent = settings.preparedBy || 'Jan Myburgh'; $('print-contact').textContent = settings.phone || '010 597 6616'; $('print-email').textContent = settings.email || 'info@agasouthafrica.co.za'; $('print-tax-number').textContent = settings.taxNumber || '105 976 616'; $('vat-rate').value = settings.vatRate ?? VAT_DEFAULT; $('quote-date').textContent = new Date().toLocaleDateString('en-ZA', { day: '2-digit', month: 'short', year: 'numeric' }); }
 
 document.querySelectorAll('.nav-item').forEach(item => item.addEventListener('click', () => switchView(item.dataset.view)));
 document.querySelectorAll('.supplier-tab').forEach(tab => tab.addEventListener('click', () => { selectedSupplier = tab.dataset.supplier; document.querySelectorAll('.supplier-tab').forEach(item => item.classList.toggle('active', item === tab)); $('supplier-source').innerHTML = `Prices shown from ${supplierInfo[selectedSupplier].name} reference catalogue Â· <a href="${supplierInfo[selectedSupplier].url}" target="_blank" rel="noopener">Open supplier â†—</a>`; renderMaterials(); }));

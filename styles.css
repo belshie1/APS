@@ -1737,3 +1737,4 @@ body :not(h1, h2, .nav-icon, .icon-button, .text-button span, .remove-material, 
         font-size: 20px !important
     }
 }
+.sidebar-website a { color: inherit; opacity: .75; font-size: 12px; text-decoration: none; letter-spacing: .04em; }.sidebar-website a:hover { opacity: 1; text-decoration: underline; }
