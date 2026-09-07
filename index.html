@@ -1103,11 +1103,39 @@
                     </div>
 
 
-                    <button class="primary-button compact" id="new-quote-button" type="button">
-                        + New quote
-                    </button>
+                    <div class="view-intro-actions">
+
+                        <button class="primary-button compact" id="export-quotes-button" type="button">
+                            Save to file
+                        </button>
+
+                        <button class="primary-button compact" id="import-quotes-button" type="button">
+                            Load from file
+                        </button>
+
+                        <button class="primary-button compact" id="google-signin-button" type="button">
+                            Sign in to Google
+                        </button>
+
+                        <button class="primary-button compact" id="drive-save-button" type="button" hidden>
+                            Save to Drive
+                        </button>
+
+                        <button class="primary-button compact" id="drive-load-button" type="button" hidden>
+                            Load from Drive
+                        </button>
+
+                        <button class="primary-button compact" id="new-quote-button" type="button">
+                            + New quote
+                        </button>
+
+                    </div>
 
                 </div>
+
+                <p class="drive-status" id="drive-status" style="margin: 0 0 12px; font-size: 13px; opacity: .7;"></p>
+
+                <input type="file" id="import-quotes-file" accept="application/json,.json" hidden>
 
 
                 <div id="saved-quotes" class="saved-quotes"></div>
@@ -1467,12 +1495,14 @@
          APS APPLICATION
          ========================================================= -->
 
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+
     <script src="app.js"></script>
 
 
     <!-- =========================================================
          SERVICE WORKER
-         
+
          The service worker is only registered when the application
          is running through HTTP or HTTPS.
 
