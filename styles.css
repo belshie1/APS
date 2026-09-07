@@ -927,11 +927,11 @@ h2 {
     }
 
     .material-row {
-        grid-template-columns: 1fr 1fr 1fr 42px 80px 58px 95px 24px
+        grid-template-columns: 1fr 1fr 1fr 46px 46px 34px 66px 58px 95px 24px
     }
 
     .material-headings {
-        grid-template-columns: 1fr 1fr 1fr 42px 80px 58px 95px 24px
+        grid-template-columns: 1fr 1fr 1fr 46px 46px 34px 66px 58px 95px 24px
     }
 
     .service-headings,
@@ -976,12 +976,12 @@ h2 {
     }
 
     .material-row {
-        grid-template-columns: 1fr 1fr 1fr 32px 60px 45px 72px 20px;
+        grid-template-columns: 1fr 1fr 1fr 40px 40px 30px 52px 50px 72px 20px;
         gap: 4px
     }
 
     .material-headings {
-        grid-template-columns: 1fr 1fr 1fr 32px 60px 45px 72px 20px;
+        grid-template-columns: 1fr 1fr 1fr 40px 40px 30px 52px 50px 72px 20px;
         gap: 4px;
         font-size: 8px;
         padding-left: 4px;

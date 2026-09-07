@@ -1,10 +1,10 @@
 {
-    "name": "Pipewise Quote Calculator",
-    "short_name": "Pipewise",
+    "name": "AGA Architectural Glass & Aluminium",
+    "short_name": "AGA Quotes",
     "start_url": "/APS/",
     "scope": "/APS/",
     "display": "standalone",
     "background_color": "#f7f9f6",
-    "theme_color": "#0757b8",
-    "description": "Offline plumbing quote and pricing calculator"
+    "theme_color": "#0e6ba8",
+    "description": "Offline glass and aluminium quote and pricing calculator"
 }
