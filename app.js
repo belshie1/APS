@@ -416,7 +416,8 @@ function initGoogleSignIn() {
         client_id: GOOGLE_CLIENT_ID,
         scope: 'https://www.googleapis.com/auth/drive.file email',
         callback: response => {
-            if (response.access_token) { googleToken = response.access_token; updateDriveButtons(); updateDriveStatus('Connected to Google Drive'); findDriveFile(); }
+            if (response.access_token) { googleToken = response.access_token; updateDriveButtons(); updateDriveStatus('Connected to Google Drive'); findDriveFile().then(() => loadQuotesFromDrive()); }
+            else if (response.error) { updateDriveStatus('Google sign-in failed: ' + response.error); }
         }
     });
 }
