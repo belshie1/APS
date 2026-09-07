@@ -23,6 +23,12 @@ settings.email ||= 'cheyenne@agasouthafrica.co.za';
 settings.taxNumber ||= '105 976 616';
 let quotes = JSON.parse(localStorage.getItem('pipewise-quotes') || '[]');
 const plumbingCatalogue = {
+    'Glass products': {
+        'Toughened safety glass': { sizes: { '6mm per m2': 950, '8mm per m2': 1250, '10mm per m2': 1650, '12mm per m2': 2100 }, markup: MATERIAL_MARKUP, unit: 'm2' },
+        'Laminated safety glass': { sizes: { '6.38mm per m2': 1450, '8.38mm per m2': 1800 }, markup: MATERIAL_MARKUP, unit: 'm2' },
+        'Float glass': { sizes: { '4mm per m2': 520, '6mm per m2': 780 }, markup: MATERIAL_MARKUP, unit: 'm2' },
+        Mirror: { sizes: { '4mm per m2': 850, '6mm per m2': 1100 }, markup: MATERIAL_MARKUP, unit: 'm2' }
+    },
     Pipes: {
         'PVC pressure pipe': { sizes: { '15mm x 6m': 120, '22mm x 6m': 180, '28mm x 6m': 260, '50mm x 6m': 205, '110mm x 6m': 349 }, markup: MATERIAL_MARKUP },
         'Copper pipe': { sizes: { '15mm x 5.5m': 450, '22mm x 5.5m': 680 }, markup: MATERIAL_MARKUP },
@@ -337,6 +343,25 @@ function getMaterialSuppliers(material) {
     return `${currency(bestPrice.cost)} - ${bestPrice.suppliers.map(supplier => supplierInfo[supplier].name).join(', ')}`;
 }
 function getQuantity(material) { return Math.max(1, Number(material.quantity) || 1); }
+function getMaterialArea(material) {
+    const w = getValue(material.width), h = getValue(material.height);
+    if (!(w > 0 && h > 0)) return 0;
+    return (w * h) / 1e6; // mm² → m²
+}
+function isAreaPriced(material) {
+    const item = plumbingCatalogue[material.category]?.[material.type];
+    return Boolean(item && item.unit === 'm2');
+}
+function getEffectiveCost(material) {
+    const area = getMaterialArea(material);
+    const unitCost = getSupplierCost(material);
+    if (!isAreaPriced(material) || !area) return unitCost * getQuantity(material);
+    return unitCost * area * getQuantity(material);
+}
+function getMaterialQtyLabel(material) {
+    const area = getMaterialArea(material);
+    return area ? area.toFixed(2) : String(getQuantity(material));
+}
 function getServiceQuantity(service) { return Math.max(1, Number(service.quantity) || 1); }
 function getServiceRate(service) { const priceListRate = serviceRates[service.task]; return priceListRate === undefined ? Number(service.rate) || 350 : priceListRate; }
 function getServiceUnit(service) { return service.unit || serviceUnits[service.task] || 'Each'; }
@@ -426,7 +451,7 @@ function getNumber(id) { return Math.max(0, Number($(id).value) || 0); }
 function nextQuoteNumber() { return `PW-${new Date().getFullYear()}-${String(quotes.length + 1).padStart(3, '0')}`; }
 function calculate() {
     const { callout, labour, total: labourTotal } = getLabourTotals();
-    const materialsTotal = materials.reduce((sum, material) => sum + getSupplierCost(material) * getQuantity(material) * (1 + MATERIAL_MARKUP / 100), 0);
+    const materialsTotal = materials.reduce((sum, material) => sum + getEffectiveCost(material) * (1 + MATERIAL_MARKUP / 100), 0);
     const servicesTotal = services.reduce((sum, service) => sum + getServiceRate(service) * getServiceQuantity(service), 0);
     const subtotal = callout + labour + materialsTotal + servicesTotal;
     const vatRate = Number($('vat-rate').value || VAT_DEFAULT);
@@ -448,14 +473,14 @@ function updatePrintDetails(totals = calculateTotals()) {
     const description = $('service-description').value.trim();
     const amendmentReason = $('amendment-reason').value.trim() || 'Reason not provided';
     const labourRows = labourItems.map(item => `<tr><td>${escapeHtml(item.description)}</td><td>${escapeHtml(item.unit)}</td><td>${getValue(item.quantity)}</td><td>${currency(item.rate)}</td><td>${currency(getValue(item.quantity) * getValue(item.rate))}</td></tr>`).join('');
-    const rows = materials.filter(material => material.description).map(material => `<tr><td>${escapeHtml(material.description)}</td><td>${getQuantity(material)}</td><td>${currency(getSupplierCost(material) * getQuantity(material) * (1 + MATERIAL_MARKUP / 100))}</td></tr>`).join('');
+    const rows = materials.filter(material => material.description).map(material => `<tr><td>${escapeHtml(material.description)}</td><td>${getMaterialQtyLabel(material)}${getMaterialArea(material) ? ' m²' : ''}</td><td>${currency(getEffectiveCost(material) * (1 + MATERIAL_MARKUP / 100))}</td></tr>`).join('');
     const serviceRows = services.filter(service => service.task).map(service => `<tr><td>${escapeHtml(service.task)}</td><td>${escapeHtml(getServiceUnit(service))}</td><td>${getServiceQuantity(service)}</td><td>${currency(getServiceRate(service))}</td><td>${currency(getServiceRate(service) * getServiceQuantity(service))}</td></tr>`).join('');
     const supportingPhotos = sitePhotos.length ? `<section class="print-supporting-photos"><h3>Supporting photos</h3><div>${sitePhotos.map((photo, index) => `<figure><img src="${photo.data}" alt="Supporting photo ${index + 1}"><figcaption>${escapeHtml(photo.description || `Supporting photo ${index + 1}`)}</figcaption></figure>`).join('')}</div></section>` : '';
     $('print-details').innerHTML = `<div class="print-document-title"><span>${isAmended ? 'AMENDED QUOTATION' : 'QUOTATION'}</span><strong>${escapeHtml($('quote-number').textContent)}</strong></div><div class="print-customer"><strong>${escapeHtml(customer)}</strong><span>${escapeHtml(phone)}</span><span>${escapeHtml(address)}</span>${description ? `<span><b>Requested services:</b> ${escapeHtml(description)}</span>` : ''}</div><h3>Labour &amp; call-out</h3><table><thead><tr><th>Description</th><th>Unit</th><th>Qty</th><th>Rate</th><th>Total</th></tr></thead><tbody>${labourRows}</tbody></table><h3>Materials</h3><table><thead><tr><th>Description</th><th>Qty</th><th>Selling price</th></tr></thead><tbody>${rows || '<tr><td colspan="3">No materials added</td></tr>'}</tbody></table><h3>Services &amp; site work</h3><table><thead><tr><th>Task</th><th>Unit</th><th>Qty</th><th>Rate</th><th>Total</th></tr></thead><tbody>${serviceRows || '<tr><td colspan="5">No additional services</td></tr>'}</tbody></table><div class="print-totals"><span>Subtotal: ${currency(totals.subtotal)}</span><span>VAT (${totals.vatRate}%): ${currency(totals.vat)}</span><strong>Total: ${currency(totals.total)}</strong></div>${isAmended ? `<div class="print-amendment"><strong>Reason for amended quote</strong><span>${escapeHtml(amendmentReason)}</span></div>` : ''}${supportingPhotos}`;
 }
 function calculateTotals() {
     const { callout, labour } = getLabourTotals();
-    const materialsTotal = materials.reduce((sum, material) => sum + getSupplierCost(material) * getQuantity(material) * (1 + MATERIAL_MARKUP / 100), 0);
+    const materialsTotal = materials.reduce((sum, material) => sum + getEffectiveCost(material) * (1 + MATERIAL_MARKUP / 100), 0);
     const servicesTotal = services.reduce((sum, service) => sum + getServiceRate(service) * getServiceQuantity(service), 0);
     const subtotal = callout + labour + materialsTotal + servicesTotal;
     const vatRate = Number($('vat-rate').value || VAT_DEFAULT);
@@ -489,9 +514,11 @@ function renderMaterials() {
             <select class="material-type" aria-label="Material type"><option value="">Select type</option>${material.category && plumbingCatalogue[material.category] ? Object.keys(plumbingCatalogue[material.category]).map(type => `<option ${material.type === type ? 'selected' : ''}>${escapeHtml(type)}</option>`).join('') : ''}</select>
             <select class="material-size" aria-label="Material size"><option value="">Select size</option>${material.category && material.type && plumbingCatalogue[material.category]?.[material.type] ? Object.keys(plumbingCatalogue[material.category][material.type].sizes).map(size => `<option ${material.size === size ? 'selected' : ''}>${escapeHtml(size)}</option>`).join('') : ''}</select>
             <input class="material-quantity" type="number" min="1" step="1" value="${getQuantity(material)}" aria-label="Material quantity">
+            <input class="material-width" type="number" min="0" step="1" value="${Number(material.width) || 0}" placeholder="W mm" aria-label="Width (mm)">
+            <input class="material-height" type="number" min="0" step="1" value="${Number(material.height) || 0}" placeholder="H mm" aria-label="Height (mm)">
         <span class="material-best-price">${material.description ? currency(getSupplierCost(material)) : '—'}</span>
     <input class="material-markup" type="number" value="${MATERIAL_MARKUP}" aria-label="Material markup percentage" readonly>
-    <span class="material-total">${currency(getSupplierCost(material) * (1 + MATERIAL_MARKUP / 100))}</span>
+    <span class="material-total">${currency(getEffectiveCost(material) * (1 + MATERIAL_MARKUP / 100))}</span>
       <button class="remove-material" type="button" aria-label="Remove material">×</button>
     </div>`).join('');
     $('material-empty').style.display = materials.length ? 'none' : 'block';
@@ -501,6 +528,8 @@ function renderMaterials() {
         row.querySelector('.material-type').addEventListener('change', event => { materials[index].type = event.target.value; materials[index].size = ''; materials[index].markup = MATERIAL_MARKUP; renderMaterials(); });
         row.querySelector('.material-size').addEventListener('change', event => { const item = plumbingCatalogue[materials[index].category]?.[materials[index].type]; if (!item || !event.target.value) return; materials[index].size = event.target.value; materials[index].description = `${materials[index].type} - ${event.target.value}`; materials[index].cost = item.sizes[event.target.value]; materials[index].markup = MATERIAL_MARKUP; renderMaterials(); });
         row.querySelector('.material-quantity').addEventListener('input', event => { materials[index].quantity = Math.max(1, Math.floor(getValue(event.target.value))); renderMaterials(); calculate(); });
+        row.querySelector('.material-width').addEventListener('input', event => { materials[index].width = getValue(event.target.value); renderMaterials(); calculate(); });
+        row.querySelector('.material-height').addEventListener('input', event => { materials[index].height = getValue(event.target.value); renderMaterials(); calculate(); });
         materials[index].markup = MATERIAL_MARKUP;
         row.querySelector('.remove-material').addEventListener('click', () => { materials.splice(index, 1); renderMaterials(); calculate(); });
     });
@@ -520,16 +549,146 @@ function saveQuote() {
     const totals = calculate();
     const quote = { id: $('quote-number').textContent, date: new Date().toISOString(), customer: { name, phone: $('customer-phone').value.trim(), address: $('customer-address').value.trim(), serviceDescription: $('service-description').value.trim(), sitePhotos }, labour: { items: labourItems.map(item => ({ ...item })) }, materials: [...materials], services: [...services], totals, amended: isAmended, amendmentReason: $('amendment-reason').value.trim() };
     if (loadedQuoteIndex === null) quotes.unshift(quote); else quotes[loadedQuoteIndex] = quote;
-    localStorage.setItem('pipewise-quotes', JSON.stringify(quotes)); $('quote-count').textContent = quotes.length; showToast(isAmended ? `Amended quote ${quote.id} saved` : `Quote ${quote.id} saved`); resetForm(); renderSavedQuotes();
+    localStorage.setItem('pipewise-quotes', JSON.stringify(quotes)); saveQuotesToDrive(true); $('quote-count').textContent = quotes.length; showToast(isAmended ? `Amended quote ${quote.id} saved` : `Quote ${quote.id} saved`); resetForm(); renderSavedQuotes();
 }
 function renderSavedQuotes() {
     $('quote-count').textContent = quotes.length;
     $('saved-quotes').innerHTML = quotes.length ? quotes.map((quote, index) => `<article class="saved-quote"><div><strong>${escapeHtml(quote.customer.name)}</strong><small>${escapeHtml(quote.id)} · ${new Date(quote.date).toLocaleDateString('en-ZA')}</small></div><div><small>Service address</small><span>${escapeHtml(quote.customer.address || 'Not provided')}</span></div><div class="saved-quote-total">${currency(quote.totals.total)}<small>${quote.materials.length} material${quote.materials.length === 1 ? '' : 's'}</small></div><div class="quote-actions"><button data-load="${index}">Open</button><button data-pdf="${index}" title="View quote as PDF" aria-label="View ${escapeHtml(quote.id)} as PDF">PDF</button><button data-delete="${index}" aria-label="Delete quote">×</button></div></article>`).join('') : '<div class="material-empty">Saved quotes will appear here.</div>';
     document.querySelectorAll('[data-load]').forEach(button => button.addEventListener('click', () => loadQuote(Number(button.dataset.load))));
     document.querySelectorAll('[data-pdf]').forEach(button => button.addEventListener('click', () => viewSavedQuotePdf(Number(button.dataset.pdf))));
-    document.querySelectorAll('[data-delete]').forEach(button => button.addEventListener('click', () => { quotes.splice(Number(button.dataset.delete), 1); localStorage.setItem('pipewise-quotes', JSON.stringify(quotes)); renderSavedQuotes(); showToast('Quote deleted'); }));
+    document.querySelectorAll('[data-delete]').forEach(button => button.addEventListener('click', () => { quotes.splice(Number(button.dataset.delete), 1); localStorage.setItem('pipewise-quotes', JSON.stringify(quotes)); saveQuotesToDrive(true); renderSavedQuotes(); showToast('Quote deleted'); }));
 }
 function loadQuote(index) { const quote = quotes[index]; loadedQuoteIndex = index; isAmended = Boolean(quote.amended); $('quote-status').textContent = isAmended ? 'AMENDED' : 'SAVED'; $('amendment-panel').hidden = !isAmended; $('customer-name').value = quote.customer.name; $('customer-phone').value = quote.customer.phone; $('customer-address').value = quote.customer.address; $('service-description').value = quote.customer.serviceDescription || ''; $('amendment-reason').value = quote.amendmentReason || ''; sitePhotos = (quote.customer.sitePhotos || (quote.customer.sitePhoto ? [quote.customer.sitePhoto] : [])).map(photo => typeof photo === 'string' ? { data: photo, description: '' } : photo); updateSitePhotoPreview(); labourItems = quote.labour.items ? quote.labour.items.map(item => ({ ...item })) : [{ description: 'Call-out fee', unit: 'Each', quantity: 1, rate: quote.labour.callout ?? 650, type: 'callout' }, { description: 'Inspection & evaluation', unit: 'Day', quantity: quote.labour.hours ?? 0, rate: quote.labour.plumberHourlyRate ?? quote.labour.hourlyRate ?? 500, type: 'labour' }, { description: 'Additional labour', unit: 'Day', quantity: quote.labour.extraWorkers ?? 0, rate: quote.labour.extraWorkerHourlyRate ?? 500, type: 'labour' }]; materials = quote.materials; services = quote.services || []; $('quote-number').textContent = quote.id; updateSummary(); renderLabourItems(); renderMaterials(); renderServices(); switchView('new-quote'); }
+// ===================== GOOGLE DRIVE SYNC =====================
+// Replace with your OAuth Client ID from Google Cloud Console (see README steps).
+const GOOGLE_CLIENT_ID = '550031555566-mtvat3oqerd8iva15qj73gr8kf6kgump.apps.googleusercontent.com';
+const DRIVE_FILE_NAME = 'pipewise-quotes.json';
+let googleToken = null;
+let googleEmail = null;
+let driveFileId = null;
+let tokenClient = null;
+
+function updateDriveStatus(message) { const el = $('drive-status'); if (el) el.textContent = message; }
+
+function updateDriveButtons() {
+    const signedIn = Boolean(googleToken);
+    $('google-signin-button').hidden = signedIn;
+    $('drive-save-button').hidden = !signedIn;
+    $('drive-load-button').hidden = !signedIn;
+}
+
+function initGoogleSignIn(retries = 0) {
+    if (!window.google || !google.accounts || !google.accounts.oauth2) {
+        if (retries < 40) { setTimeout(() => initGoogleSignIn(retries + 1), 300); return; }
+        updateDriveStatus('Google sign-in library could not load — check your internet connection or ad blocker');
+        return;
+    }
+    tokenClient = google.accounts.oauth2.initTokenClient({
+        client_id: GOOGLE_CLIENT_ID,
+        scope: 'https://www.googleapis.com/auth/drive.file email',
+        callback: response => {
+            if (response.access_token) { googleToken = response.access_token; updateDriveButtons(); updateDriveStatus('Connected to Google Drive'); findDriveFile().then(() => loadQuotesFromDrive()); }
+            else if (response.error) { updateDriveStatus('Google sign-in failed: ' + response.error); }
+        }
+    });
+}
+
+function signInGoogle() {
+    if (GOOGLE_CLIENT_ID.startsWith('YOUR_CLIENT_ID')) { showToast('Add your Google Client ID in app.js first'); return; }
+    tokenClient.requestAccessToken({ prompt: 'consent' });
+}
+
+async function driveFetch(url, options = {}) {
+    options.headers = { ...(options.headers || {}), Authorization: `Bearer ${googleToken}` };
+    const response = await fetch(url, options);
+    if (response.status === 401) { googleToken = null; updateDriveButtons(); updateDriveStatus('Google session expired — sign in again'); throw new Error('unauthorised'); }
+    if (!response.ok) throw new Error(`Drive request failed (${response.status})`);
+    return response;
+}
+
+async function findDriveFile() {
+    try {
+        const query = encodeURIComponent(`name='${DRIVE_FILE_NAME}' and trashed=false`);
+        const response = await driveFetch(`https://www.googleapis.com/drive/v3/files?q=${query}&fields=files(id,name)`);
+        const data = await response.json();
+        driveFileId = data.files && data.files.length ? data.files[0].id : null;
+        updateDriveStatus(driveFileId ? 'Backing up to Drive: pipewise-quotes.json' : 'No Drive backup yet — it will be created on next save');
+    } catch { /* silent — status already handled in driveFetch for 401s */ }
+}
+
+async function saveQuotesToDrive(silent = false) {
+    if (!googleToken) return;
+    try {
+        if (!driveFileId) await findDriveFile();
+        const boundary = 'pipewise' + Date.now();
+        const metadata = { name: DRIVE_FILE_NAME, mimeType: 'application/json' };
+        const body = `--${boundary}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n${JSON.stringify(metadata)}\r\n--${boundary}\r\nContent-Type: application/json\r\n\r\n${JSON.stringify({ exported: new Date().toISOString(), quotes }, null, 2)}\r\n--${boundary}--`;
+        const url = driveFileId
+            ? `https://www.googleapis.com/upload/drive/v3/files/${driveFileId}?uploadType=multipart`
+            : 'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id';
+        const response = await driveFetch(url, { method: driveFileId ? 'PATCH' : 'POST', headers: { 'Content-Type': `multipart/related; boundary=${boundary}` }, body });
+        if (!driveFileId) driveFileId = (await response.json()).id;
+        if (!silent) showToast('Quotes saved to Google Drive');
+        updateDriveStatus(`Backed up to Drive · ${new Date().toLocaleTimeString('en-ZA', { hour: '2-digit', minute: '2-digit' })}`);
+    } catch (error) {
+        if (error.message !== 'unauthorised') { updateDriveStatus('Drive backup failed — will retry on next save'); if (!silent) showToast('Could not save to Google Drive'); }
+    }
+}
+
+async function loadQuotesFromDrive() {
+    if (!googleToken) { updateDriveStatus('Sign in to Google first'); return; }
+    try {
+        if (!driveFileId) await findDriveFile();
+        if (!driveFileId) { showToast('No backup found in Drive yet'); return; }
+        const response = await driveFetch(`https://www.googleapis.com/drive/v3/files/${driveFileId}?alt=media`);
+        const data = JSON.parse(await response.text());
+        const incoming = Array.isArray(data) ? data : data.quotes;
+        if (!Array.isArray(incoming)) throw new Error('bad format');
+        const existingIds = new Set(quotes.map(quote => quote.id));
+        const added = incoming.filter(quote => quote && quote.id && !existingIds.has(quote.id));
+        if (!added.length) { showToast('Quotes already up to date with Drive'); return; }
+        quotes = incoming.filter(quote => quote && quote.id);
+        localStorage.setItem('pipewise-quotes', JSON.stringify(quotes));
+        renderSavedQuotes();
+        showToast(`${added.length} quote${added.length === 1 ? '' : 's'} loaded from Drive`);
+    } catch (error) {
+        if (error.message !== 'unauthorised') showToast('Could not read backup from Drive');
+    }
+}
+// =================== END GOOGLE DRIVE SYNC ===================
+
+function exportQuotes() {
+    if (!quotes.length) { showToast('No saved quotes to export'); return; }
+    const blob = new Blob([JSON.stringify({ exported: new Date().toISOString(), quotes }, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `pipewise-quotes-${new Date().toISOString().slice(0, 10)}.json`;
+    link.click();
+    URL.revokeObjectURL(url);
+    showToast(`${quotes.length} quote${quotes.length === 1 ? '' : 's'} saved to file`);
+}
+
+function importQuotes(file) {
+    const reader = new FileReader();
+    reader.onerror = () => showToast('File could not be read');
+    reader.onload = () => {
+        try {
+            const data = JSON.parse(reader.result);
+            const incoming = Array.isArray(data) ? data : data.quotes;
+            if (!Array.isArray(incoming)) throw new Error('bad format');
+            const existingIds = new Set(quotes.map(quote => quote.id));
+            const added = incoming.filter(quote => quote && quote.id && !existingIds.has(quote.id));
+            if (!added.length) { showToast('No new quotes found in file'); return; }
+            quotes = [...added, ...quotes];
+            localStorage.setItem('pipewise-quotes', JSON.stringify(quotes));
+            renderSavedQuotes();
+            showToast(`${added.length} quote${added.length === 1 ? '' : 's'} imported`);
+        } catch { showToast('That file is not a valid quotes file'); }
+    };
+    reader.readAsText(file);
+}
+
 function viewSavedQuotePdf(index) { loadQuote(index); requestAnimationFrame(() => window.print()); }
 function switchView(view) { document.querySelectorAll('.nav-item').forEach(item => item.classList.toggle('active', item.dataset.view === view)); document.querySelectorAll('.view').forEach(item => item.classList.remove('active-view')); $(`${view}-view`).classList.add('active-view'); $('page-title').textContent = view === 'new-quote' ? 'Quote' : view === 'quotes' ? 'Saved quotes' : view === 'price-list' ? 'Price list' : view === 'scenarios' ? 'Scenarios' : 'Company settings'; if (view === 'price-list') renderPriceList(); if (view === 'scenarios') renderScenarioEditor(); }
 function loadSettings() { $('company-name').value = settings.name || ''; $('company-phone').value = settings.phone || ''; $('company-email').value = settings.email || ''; $('prepared-by').value = settings.preparedBy || ''; $('tax-number').value = settings.taxNumber || ''; $('print-prepared-by').textContent = settings.preparedBy || 'Cheyenne'; $('print-contact').textContent = settings.phone || '076 705 8718'; $('print-email').textContent = settings.email || 'cheyenne@agasouthafrica.co.za'; $('print-tax-number').textContent = settings.taxNumber || '105 976 616'; $('vat-rate').value = settings.vatRate ?? VAT_DEFAULT; $('quote-date').textContent = new Date().toLocaleDateString('en-ZA', { day: '2-digit', month: 'short', year: 'numeric' }); }
@@ -553,7 +712,14 @@ $('add-material').addEventListener('click', () => { materials.push({ category: '
 $('add-service').addEventListener('click', () => { services.push({ category: '', task: '', quantity: 1, rate: 350, scenario: 'Additional services' }); renderServices(); document.querySelector('.service-category:last-of-type')?.focus(); });
 $('add-scenario').addEventListener('click', addScenario);
 function clearQuote() { resetForm(); showToast('Quote cleared'); }
-$('save-quote').addEventListener('click', saveQuote); $('clear-quote').addEventListener('click', clearQuote); $('clear-quote-top').addEventListener('click', clearQuote); $('print-button').addEventListener('click', () => window.print()); $('pdf-button').addEventListener('click', () => window.print()); $('new-quote-button').addEventListener('click', () => { resetForm(); switchView('new-quote'); });
+$('save-quote').addEventListener('click', saveQuote); $('clear-quote').addEventListener('click', clearQuote); $('clear-quote-top').addEventListener('click', clearQuote); $('print-button').addEventListener('click', () => window.print()); $('pdf-button').addEventListener('click', () => window.print()); $('export-quotes-button').addEventListener('click', exportQuotes);
+$('import-quotes-button').addEventListener('click', () => $('import-quotes-file').click());
+$('import-quotes-file').addEventListener('change', event => { const file = event.target.files[0]; if (file) importQuotes(file); event.target.value = ''; });
+$('google-signin-button').addEventListener('click', signInGoogle);
+$('drive-save-button').addEventListener('click', () => saveQuotesToDrive(false));
+$('drive-load-button').addEventListener('click', loadQuotesFromDrive);
+initGoogleSignIn();
+$('new-quote-button').addEventListener('click', () => { resetForm(); switchView('new-quote'); });
 $('check-prices-button').addEventListener('click', runPriceCheck);
 $('price-list-file-page').addEventListener('change', importPriceList);
 $('price-list-search').addEventListener('input', renderPriceList);
