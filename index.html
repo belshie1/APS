@@ -1,1485 +1,566 @@
-<!doctype html>
-<html lang="en-ZA">
+<!DOCTYPE html>
+<html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <meta name="theme-color" content="#123b70">
-    <meta name="description" content="Offline glass and aluminium quote and pricing calculator">
-
-    <link rel="manifest" href="manifest.json">
-    <link rel="stylesheet" href="styles.css">
-
-    <title>AGA Quote Calculator</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description"
+        content="AGA Architectural Glass & Aluminium - Window Measurement and Production Tracking System" />
+    <title>AGA | Glass & Aluminium Production</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://unpkg.com/html5-qrcode"></script>
 </head>
 
 <body>
 
-    <div class="app-shell">
-
-        <!-- =====================================================
-             SIDEBAR
-             ===================================================== -->
-
-        <aside class="sidebar">
-
-            <div class="brand">
-                <img class="brand-logo" src="AGA_LOGO.png" alt="AGA Architectural Glass & Aluminium">
-            </div>
-
-            <div class="sidebar-kicker">
-                FIELD QUOTING / 01
-            </div>
-
-            <nav class="nav" aria-label="Main navigation">
-
-                <button class="nav-item active" data-view="new-quote" type="button">
-                    <span class="nav-icon">+</span>
-                    Quote
-                </button>
-
-                <button class="nav-item" data-view="quotes" type="button">
-                    <span class="nav-icon">▤</span>
-                    Saved quotes
-                    <span class="nav-count" id="quote-count">0</span>
-                </button>
-
-                <button class="nav-item" data-view="settings" type="button">
-                    <span class="nav-icon">⌘</span>
-                    Company settings
-                </button>
-
-                <button class="nav-item" data-view="price-list" type="button">
-                    <span class="nav-icon">▥</span>
-                    Price list
-                </button>
-
-                <button class="nav-item" data-view="scenarios" type="button">
-                    <span class="nav-icon">☷</span>
-                    Scenarios
-                </button>
-
-            </nav>
-
-            <div class="sidebar-footer">
-                <span class="status-dot"></span>
-                <span>Works offline</span>
-            </div>
-            <div class="sidebar-footer sidebar-website">
-                <a href="https://agasouthafrica.co.za/" target="_blank" rel="noopener noreferrer">agasouthafrica.co.za ↗</a>
-            </div>
-
-        </aside>
-
-
-        <!-- =====================================================
-             MAIN CONTENT
-             ===================================================== -->
-
-        <main class="main-content">
-
-            <!-- =================================================
-                 TOP BAR
-                 ================================================= -->
-
-            <header class="topbar">
-
+    <!-- HEADER -->
+    <header class="app-header">
+        <div class="header-content">
+            <div class="company-info">
+                <h1>AGA</h1>
                 <div>
-                    <div class="eyebrow">
-                        GLASS & ALUMINIUM OPERATIONS
-                    </div>
+                    <strong>Architectural Glass & Aluminium</strong>
+                    <span>Window Measurement & Production System</span>
+                </div>
+            </div>
+            <div class="header-contact">
+                <a href="tel:0105976616">010 597 6616</a>
+                <a href="mailto:info@agasouthafrica.co.za">info@agasouthafrica.co.za</a>
+            </div>
+        </div>
+    </header>
 
-                    <h1 id="page-title">
-                        Quote
-                    </h1>
+    <!-- NAVIGATION -->
+    <nav class="main-navigation">
+        <button type="button" class="nav-button active" data-view="dashboard">Dashboard</button>
+        <button type="button" class="nav-button" data-view="new-window">New Window</button>
+        <button type="button" class="nav-button" data-view="windows">Windows</button>
+        <button type="button" class="nav-button" data-view="scanner">Scan QR</button>
+        <button type="button" class="nav-button" data-view="employees">Employees</button>
+    </nav>
+
+    <main class="app-container">
+        <!-- DASHBOARD VIEW -->
+        <section id="dashboard-view" class="app-view active">
+            <div class="page-header">
+                <div>
+                    <h2>Production Dashboard</h2>
+                    <p>Track your windows and aluminium products through the manufacturing process.</p>
+                </div>
+                <button type="button" class="primary-button" id="dashboardNewWindowButton">+ New Window</button>
+            </div>
+
+            <!-- STATUS CARDS -->
+            <div class="dashboard-cards">
+                <div class="dashboard-card">
+                    <span class="dashboard-card-label">Total Windows</span>
+                    <strong id="totalWindows" class="dashboard-card-value">0</strong>
+                </div>
+                <div class="dashboard-card">
+                    <span class="dashboard-card-label">Measured</span>
+                    <strong id="measuredWindows" class="dashboard-card-value">0</strong>
+                </div>
+                <div class="dashboard-card">
+                    <span class="dashboard-card-label">In Production</span>
+                    <strong id="productionWindows" class="dashboard-card-value">0</strong>
+                </div>
+                <div class="dashboard-card">
+                    <span class="dashboard-card-label">Ready</span>
+                    <strong id="readyWindows" class="dashboard-card-value">0</strong>
+                </div>
+            </div>
+
+            <!-- RECENT WINDOWS -->
+            <div class="section-card">
+                <div class="section-card-header">
+                    <h3>Recent Windows</h3>
+                    <button type="button" class="secondary-button" id="viewAllWindowsButton">View All</button>
+                </div>
+                <div id="recentWindows" class="window-list">
+                    <div class="empty-state">
+                        <h4>No windows yet</h4>
+                        <p>Create your first window measurement to get started.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- NEW WINDOW VIEW -->
+        <section id="new-window-view" class="app-view">
+            <div class="page-header">
+                <div>
+                    <h2>New Window / Door</h2>
+                    <p>Capture the measurements and information required by the workshop.</p>
+                </div>
+            </div>
+
+            <form id="windowForm" class="window-form" novalidate>
+
+                <!-- PROJECT INFORMATION -->
+                <div class="section-card">
+                    <div class="section-card-header">
+                        <h3>Project Information</h3>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="projectName">Project Name *</label>
+                            <input type="text" id="projectName" name="projectName" placeholder="Project / Site Name"
+                                required>
+                        </div>
+                        <div class="form-group">
+                            <label for="customerName">Customer Name *</label>
+                            <input type="text" id="customerName" name="customerName" placeholder="Customer name"
+                                required>
+                        </div>
+                        <div class="form-group">
+                            <label for="customerEmail">Customer Email</label>
+                            <input type="email" id="customerEmail" name="customerEmail"
+                                placeholder="customer@example.com">
+                            <small>Used for automatic production updates.</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="customerPhone">Customer Phone</label>
+                            <input type="tel" id="customerPhone" name="customerPhone"
+                                placeholder="Customer phone number">
+                        </div>
+                        <div class="form-group form-group-full">
+                            <label for="siteAddress">Site Address</label>
+                            <textarea id="siteAddress" name="siteAddress" rows="2"
+                                placeholder="Installation address"></textarea>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="top-actions">
-
-                    <span class="quote-status" id="quote-status">
-                        NEW
-                    </span>
-
-                    <span class="quote-id" id="quote-number">
-                        AGA-2026-001
-                    </span>
-
-                    <button class="clear-quote-top" id="clear-quote-top" title="Clear quote" aria-label="Clear quote"
-                        type="button">
-                        Clear quote
-                    </button>
-
-                    <button class="icon-button" id="print-button" title="View quote as PDF"
-                        aria-label="View quote as PDF" type="button">
-                        ⤓
-                    </button>
-
+                <!-- WINDOW INFORMATION -->
+                <div class="section-card">
+                    <div class="section-card-header">
+                        <h3>Window Information</h3>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="windowLocation">Window Location *</label>
+                            <input type="text" id="windowLocation" name="windowLocation" placeholder="e.g. Bedroom 1"
+                                required>
+                        </div>
+                        <div class="form-group">
+                            <label for="windowType">Window / Door Type *</label>
+                            <select id="windowType" name="windowType" required>
+                                <option value="">Select type</option>
+                                <option value="Window">Window</option>
+                                <option value="Door">Door</option>
+                                <option value="Sliding Door">Sliding Door</option>
+                                <option value="Stacking Door">Stacking Door</option>
+                                <option value="Folding Door">Folding Door</option>
+                                <option value="Shopfront">Shopfront</option>
+                                <option value="Fixed Panel">Fixed Panel</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="quantity">Quantity</label>
+                            <input type="number" id="quantity" name="quantity" min="1" value="1">
+                        </div>
+                    </div>
                 </div>
 
-            </header>
-
-
-            <!-- =================================================
-                 NEW QUOTE VIEW
-                 ================================================= -->
-
-            <section id="new-quote-view" class="view active-view">
-
-                <div class="workspace-grid">
-
-                    <!-- =========================================
-                         FORM COLUMN
-                         ========================================= -->
-
-                    <div class="form-column">
-
-                        <!-- =====================================
-                             CUSTOMER DETAILS
-                             ===================================== -->
-
-                        <section class="section-block customer-section">
-
-                            <div class="section-heading">
-
-                                <div>
-                                    <span class="section-number">
-                                        01
-                                    </span>
-
-                                    <h2>
-                                        Customer details
-                                    </h2>
-                                </div>
-
-                                <span class="required-note">
-                                    Required
-                                </span>
-
-                            </div>
-
-
-                            <div class="field-grid">
-
-                                <label class="field field-wide">
-
-                                    <span>
-                                        Customer name
-                                    </span>
-
-                                    <input id="customer-name" type="text" placeholder="e.g. Thandi Mokoena">
-
-                                </label>
-
-
-                                <label class="field">
-
-                                    <span>
-                                        Phone number
-                                    </span>
-
-                                    <input id="customer-phone" type="tel" placeholder="082 000 0000">
-
-                                </label>
-
-
-                                <label class="field field-wide">
-
-                                    <span>
-                                        Service address
-                                    </span>
-
-                                    <textarea id="customer-address" rows="2"
-                                        placeholder="Street address, suburb, city"></textarea>
-
-                                </label>
-
-
-                                <label class="field field-wide">
-
-                                    <span>
-                                        Description of requested services
-                                    </span>
-
-                                    <textarea id="service-description" rows="3"
-                                        placeholder="Describe the work the customer requested"></textarea>
-
-                                </label>
-
-
-                                <!-- SITE PHOTOS -->
-
-                                <div class="field field-wide photo-field">
-
-                                    <span>
-                                        Site photos
-                                    </span>
-
-                                    <div class="photo-upload">
-
-                                        <label class="photo-upload-button" for="site-photo">
-                                            Upload photos
-                                        </label>
-
-                                        <input id="site-photo" type="file" accept="image/*" multiple
-                                            aria-label="Upload site photos">
-
-                                        <span id="site-photo-status">
-                                            No photos selected
-                                        </span>
-
-                                    </div>
-
-                                    <div class="site-photo-preview" id="site-photo-preview"></div>
-
-                                </div>
-
-                            </div>
-
-                        </section>
-
-
-                        <!-- =====================================
-                             LABOUR & CALL-OUT
-                             ===================================== -->
-
-                        <section class="section-block">
-
-                            <div class="section-heading">
-
-                                <div>
-                                    <span class="section-number">
-                                        02
-                                    </span>
-
-                                    <h2>
-                                        Labour &amp; call-out
-                                    </h2>
-                                </div>
-
-                                <span class="unit-label">
-                                    ZAR / RAND
-                                </span>
-
-                            </div>
-
-
-                            <div class="labour-headings" aria-hidden="true">
-                                <span>Line item</span>
-                                <span>Unit</span>
-                                <span>Width (mm)</span>
-                                <span>Height (mm)</span>
-                                <span>Qty</span>
-                                <span>Cost / day</span>
-                                <span>Total</span>
-                            </div>
-
-
-                            <div class="labour-list" id="labour-list"></div>
-
-
-                            <div class="inline-total">
-
-                                <span>
-                                    Labour &amp; call-out total
-                                </span>
-
-                                <strong id="labour-total">
-                                    R 2,150.00
-                                </strong>
-
-                            </div>
-
-                        </section>
-
-
-                        <!-- =====================================
-                             MATERIALS
-                             ===================================== -->
-
-                        <section class="section-block materials-block">
-
-                            <div class="section-heading">
-
-                                <div>
-                                    <span class="section-number">
-                                        03
-                                    </span>
-
-                                    <h2>
-                                        Materials
-                                    </h2>
-                                </div>
-
-                                <div class="material-actions">
-
-                                    <button class="text-button" id="add-material" type="button">
-                                        <span>+</span>
-                                        Add material
-                                    </button>
-
-                                </div>
-
-                            </div>
-
-
-                            <p class="material-note">
-                                Choose a category, material type, and size.
-                                Suppliers that list the item are shown.
-                            </p>
-
-
-                            <!-- SUPPLIER TABS -->
-
-                            <div class="supplier-tabs" role="tablist" aria-label="Supplier price source">
-
-                                <button class="supplier-tab active" data-supplier="pg" role="tab" type="button">
-                                    PG Glass
-                                </button>
-
-                                <button class="supplier-tab" data-supplier="glassfit" role="tab" type="button">
-                                    Glassfit
-                                </button>
-
-                                <button class="supplier-tab" data-supplier="wispeco" role="tab" type="button">
-                                    Wispeco Aluminium
-                                </button>
-
-                            </div>
-
-
-                            <div class="supplier-source" id="supplier-source">
-                                Prices shown from PG Glass reference
-                                catalogue ·
-
-                                <a href="https://www.pgglass.co.za/" target="_blank"
-                                    rel="noopener noreferrer">
-                                    Open supplier ↗
-                                </a>
-                            </div>
-
-
-                            <!-- PRICE CHECK -->
-
-                            <div class="price-check-bar">
-
-                                <span id="price-check-status">
-                                    Morning price check not run
-                                </span>
-
-                                <button class="check-prices-button" id="check-prices-button" type="button">
-                                    Check prices now
-                                </button>
-
-                            </div>
-
-
-                            <!-- MATERIAL HEADINGS -->
-
-                            <div class="material-headings" aria-hidden="true">
-                                <span>Category</span>
-                                <span>Material type</span>
-                                <span>Size</span>
-                                <span>Width (mm)</span>
-                                <span>Height (mm)</span>
-                                <span>Qty</span>
-                                <span>Best price</span>
-                                <span>Markup</span>
-                                <span>Selling price</span>
-                                <span></span>
-                            </div>
-
-
-                            <div class="material-list" id="material-list"></div>
-
-
-                            <div class="material-empty" id="material-empty">
-                                No materials added yet.
-                                Add parts used for this job.
-                            </div>
-
-                        </section>
-
-
-                        <!-- =====================================
-                             JOB SCENARIOS
-                             ===================================== -->
-
-                        <section class="scenario-panel" aria-labelledby="scenario-title">
-
-                            <div>
-
-                                <span class="eyebrow">
-                                    QUICK START
-                                </span>
-
-                                <h2 id="scenario-title">
-                                    Job scenarios
-                                </h2>
-
-                                <p>
-                                    Start with a common job, then remove
-                                    anything you do not need.
-                                </p>
-
-                            </div>
-
-
-                            <div class="scenario-controls">
-
-                                <select id="scenario-select" aria-label="Job scenario">
-
-                                    <option value="">
-                                        Select a job scenario
-                                    </option>
-
-                                    <optgroup label="Shopfronts &amp; entrances">
-
-                                        <option value="shopfront-glass">
-                                            Shopfront glass replacement
-                                        </option>
-
-                                        <option value="shopfront-doors">
-                                            New aluminium shopfront &amp; doors
-                                        </option>
-
-                                    </optgroup>
-
-                                    <optgroup label="Windows &amp; doors">
-
-                                        <option value="aluminium-window">
-                                            Aluminium window installation
-                                        </option>
-
-                                        <option value="sliding-door">
-                                            Aluminium sliding door
-                                        </option>
-
-                                        <option value="window-bank">
-                                            Window bank re-glazing
-                                        </option>
-
-                                        <option value="broken-window">
-                                            Broken window replacement
-                                        </option>
-
-                                    </optgroup>
-
-                                    <optgroup label="Interiors &amp; bathrooms">
-
-                                        <option value="shower-enclosure">
-                                            Shower glass enclosure
-                                        </option>
-
-                                        <option value="mirror-install">
-                                            Mirror installation
-                                        </option>
-
-                                    </optgroup>
-
-                                    <optgroup label="Balustrades &amp; safety">
-
-                                        <option value="balustrade">
-                                            Glass balustrade installation
-                                        </option>
-
-                                    </optgroup>
-
-                                    <optgroup label="Repairs">
-
-                                        <option value="glass-replacement">
-                                            Glass panel replacement
-                                        </option>
-
-                                        <option value="frame-only">
-                                            Aluminium frame supply &amp; fit
-                                        </option>
-
-                                    </optgroup>
-
-                                </select>
-
-
-                                <button class="primary-button compact" id="add-scenario" type="button">
-                                    Add scenario
-                                </button>
-
-                            </div>
-
-                        </section>
-
-
-                        <!-- =====================================
-                             SERVICES & SITE WORK
-                             ===================================== -->
-
-                        <section class="section-block services-block">
-
-                            <div class="section-heading">
-
-                                <div>
-                                    <span class="section-number">
-                                        04
-                                    </span>
-
-                                    <h2>
-                                        Services &amp; site work
-                                    </h2>
-                                </div>
-
-                                <button class="text-button" id="add-service" type="button">
-                                    <span>+</span>
-                                    Add service
-                                </button>
-
-                            </div>
-
-
-                            <p class="material-note">
-                                Add physical work separately from materials,
-                                such as excavation, restoration, cleaning,
-                                or equipment.
-                            </p>
-
-
-                            <div class="material-headings service-headings" aria-hidden="true">
-                                <span>Category</span>
-                                <span>Task</span>
-                                <span>Unit</span>
-                                <span>Width (mm)</span>
-                                <span>Height (mm)</span>
-                                <span>Qty</span>
-                                <span>Rate</span>
-                                <span>Total</span>
-                                <span></span>
-                            </div>
-
-
-                            <div class="service-list" id="service-list"></div>
-
-
-                            <div class="material-empty" id="service-empty">
-                                No additional services added yet.
-                            </div>
-
-                        </section>
-
-
-                        <!-- =====================================
-                             AMENDED QUOTE
-                             ===================================== -->
-
-                        <section class="section-block amendment-panel" id="amendment-panel" hidden>
-
-                            <div class="section-heading">
-
-                                <div>
-                                    <span class="section-number">
-                                        05
-                                    </span>
-
-                                    <h2>
-                                        Amended quote
-                                    </h2>
-                                </div>
-
-                                <span class="unit-label">
-                                    REQUIRED FOR REISSUE
-                                </span>
-
-                            </div>
-
-
-                            <label class="field">
-
-                                <span>
-                                    Reason for amended quote
-                                </span>
-
-                                <textarea id="amendment-reason" rows="2"
-                                    placeholder="Describe what changed in this quote"></textarea>
-
-                            </label>
-
-                        </section>
-
+                <!-- MEASUREMENTS -->
+                <div class="section-card">
+                    <div class="section-card-header">
+                        <h3>Measurements</h3>
+                        <span class="measurement-note">All measurements in millimetres (mm)</span>
                     </div>
-
-
-                    <!-- =========================================
-                         SUMMARY CARD
-                         ========================================= -->
-
-                    <aside class="summary-card">
-
-                        <!-- PRINT HEADER -->
-
-                        <div class="company-print-header">
-
-                            <img src="AGA_LOGO.png" alt="AGA Architectural Glass & Aluminium">
-
-                            <span>
-                                AGA ARCHITECTURAL GLASS & ALUMINIUM
-                            </span>
-
-                            <small>
-                                Reg No: 2025/816148/07<br>
-                                Unit 7, Central Lake Factory Park<br>
-                                5 Louis Friedman Street, Factoria, Krugersdorp
-                            </small>
-
-
-                            <div class="company-contact-print">
-
-                                <b>OFFICE</b><br>
-
-                                Prepared by:
-                                <span id="print-prepared-by">
-                                    Cheyenne
-                                </span>
-                                <br>
-
-                                Contact:
-                                <span id="print-contact">
-                                    076 705 8718
-                                </span>
-                                <br>
-
-                                Email:
-                                <span id="print-email">
-                                    cheyenne@agasouthafrica.co.za
-                                </span>
-                                <br>
-
-                                Tax reference:
-                                <span id="print-tax-number">
-                                    105 976 616
-                                </span>
-
-                            </div>
-
+                    <div class="measurement-table-wrapper">
+                        <table class="measurement-table">
+                            <thead>
+                                <tr>
+                                    <th>Measurement</th>
+                                    <th>Top/Left</th>
+                                    <th>Middle</th>
+                                    <th>Bottom/Right</th>
+                                    <th>Final</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Width</td>
+                                    <td><input type="number" id="widthTop" name="widthTop" min="0" step="1"></td>
+                                    <td><input type="number" id="widthMiddle" name="widthMiddle" min="0" step="1"></td>
+                                    <td><input type="number" id="widthBottom" name="widthBottom" min="0" step="1"></td>
+                                    <td><input type="number" id="finalWidth" name="finalWidth" min="0" step="1"
+                                            required></td>
+                                </tr>
+                                <tr>
+                                    <td>Height</td>
+                                    <td><input type="number" id="heightLeft" name="heightLeft" min="0" step="1"></td>
+                                    <td><input type="number" id="heightMiddle" name="heightMiddle" min="0" step="1">
+                                    </td>
+                                    <td><input type="number" id="heightRight" name="heightRight" min="0" step="1"></td>
+                                    <td><input type="number" id="finalHeight" name="finalHeight" min="0" step="1"
+                                            required></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="form-grid measurement-extra">
+                        <div class="form-group">
+                            <label for="measurementDepth">Frame Depth</label>
+                            <input type="number" id="measurementDepth" name="measurementDepth" min="0" step="1"
+                                placeholder="mm">
                         </div>
-
-
-                        <!-- SUMMARY TOP -->
-
-                        <div class="summary-top">
-
-                            <span class="eyebrow">
-                                QUOTE SUMMARY
-                            </span>
-
-                            <span class="summary-date" id="quote-date"></span>
-
+                        <div class="form-group">
+                            <label for="openingType">Opening</label>
+                            <select id="openingType" name="openingType">
+                                <option value="">Select</option>
+                                <option value="Left">Left</option>
+                                <option value="Right">Right</option>
+                                <option value="Centre">Centre</option>
+                                <option value="Fixed">Fixed</option>
+                                <option value="N/A">N/A</option>
+                            </select>
                         </div>
-
-
-                        <div class="summary-customer" id="summary-customer">
-                            New customer
-                        </div>
-
-
-                        <div class="summary-address" id="summary-address">
-                            Add a service address
-                        </div>
-
-
-                        <div class="print-details" id="print-details"></div>
-
-
-                        <!-- SUMMARY LINES -->
-
-                        <div class="summary-lines">
-
-                            <div>
-                                <span>
-                                    Call-out
-                                </span>
-
-                                <strong id="summary-callout">
-                                    R 650.00
-                                </strong>
-                            </div>
-
-
-                            <div>
-                                <span>
-                                    Labour
-                                </span>
-
-                                <strong id="summary-labour">
-                                    R 1,500.00
-                                </strong>
-                            </div>
-
-
-                            <div>
-                                <span>
-                                    Materials
-                                </span>
-
-                                <strong id="summary-materials">
-                                    R 0.00
-                                </strong>
-                            </div>
-
-
-                            <div>
-                                <span>
-                                    Services &amp; site work
-                                </span>
-
-                                <strong id="summary-services">
-                                    R 0.00
-                                </strong>
-                            </div>
-
-                        </div>
-
-
-                        <!-- VAT -->
-
-                        <div class="vat-row">
-
-                            <label class="switch-label">
-
-                                <input id="vat-enabled" type="checkbox" checked>
-
-                                <span class="switch"></span>
-
-                                Include VAT
-
-                            </label>
-
-                            <span id="vat-rate-label">
-                                15%
-                            </span>
-
-                        </div>
-
-
-                        <!-- GRAND TOTAL -->
-
-                        <div class="grand-total">
-
-                            <span>
-                                Total incl. VAT
-                            </span>
-
-                            <strong id="grand-total">
-                                R 2,472.50
-                            </strong>
-
-                        </div>
-
-
-                        <!-- ACTION BUTTONS -->
-
-                        <button class="pdf-button" id="pdf-button" type="button">
-                            <span>
-                                View / save as PDF
-                            </span>
-
-                            <span>
-                                ⤓
-                            </span>
-                        </button>
-
-
-                        <button class="primary-button" id="save-quote" type="button">
-                            <span>
-                                Save quote
-                            </span>
-
-                            <span>
-                                →
-                            </span>
-                        </button>
-
-
-                        <button class="secondary-button" id="clear-quote" type="button">
-                            Clear form
-                        </button>
-
-
-                        <p class="summary-footnote">
-                            Prices are calculated in South African Rand.
-                            VAT is applied to the subtotal.
-                        </p>
-
-                    </aside>
-
-
-                    <!-- =========================================
-                         TERMS & CONDITIONS
-                         ========================================= -->
-
-                    <section class="quote-terms" aria-labelledby="terms-title">
-
-                        <header class="terms-header">
-
-                            <img src="AGA_LOGO.png" alt="AGA Architectural Glass & Aluminium">
-
-                            <div>
-
-                                <span>
-                                    AGA ARCHITECTURAL GLASS & ALUMINIUM
-                                </span>
-
-                                <h2 id="terms-title">
-                                    Terms &amp; Conditions
-                                </h2>
-
-                            </div>
-
-                        </header>
-
-
-                        <ol class="terms-list">
-
-                            <li>
-                                <strong>Scope of work</strong>
-                                <span>
-                                    This quotation covers only the work
-                                    specifically listed. Any additional work
-                                    requested will be treated as a variation
-                                    and quoted separately.
-                                </span>
-                            </li>
-
-
-                            <li>
-                                <strong>Validity of quote</strong>
-                                <span>
-                                    This quotation is valid for 30 days from
-                                    the date of issue. Prices may change
-                                    thereafter because of material or labour
-                                    cost fluctuations.
-                                </span>
-                            </li>
-
-
-                            <li>
-                                <strong>Payment terms</strong>
-                                <span>
-                                    80% deposit is payable on acceptance for
-                                    materials and scheduling. The remaining
-                                    20% is payable on practical completion,
-                                    before COC handover where applicable.
-                                    Late payments may incur interest charges.
-                                </span>
-                            </li>
-
-
-                            <li>
-                                <strong>Materials</strong>
-                                <span>
-                                    All materials are subject to availability.
-                                    Where a specified item is unavailable,
-                                    an alternative will be presented to the
-                                    client for acceptance. Price adjustments
-                                    may apply where material costs increase
-                                    after acceptance.
-                                </span>
-                            </li>
-
-
-                            <li>
-                                <strong>Variations and changes</strong>
-                                <span>
-                                    Any change to the agreed scope must be
-                                    requested in writing and approved at a
-                                    revised cost before work proceeds.
-                                </span>
-                            </li>
-
-
-                            <li>
-                                <strong>Project timeline</strong>
-                                <span>
-                                    Estimated timelines are provided in good
-                                    faith and may be affected by weather
-                                    conditions, material delays, or client
-                                    changes and delays.
-                                </span>
-                            </li>
-
-
-                            <li>
-                                <strong>Access to site</strong>
-                                <span>
-                                    The client must provide reasonable access
-                                    to the site and ensure water, electricity,
-                                    and necessary permissions are available.
-                                </span>
-                            </li>
-
-
-                            <li>
-                                <strong>Health and safety</strong>
-                                <span>
-                                    All work will comply with applicable safety
-                                    regulations. The contractor is not
-                                    responsible for pre-existing hazards that
-                                    were not disclosed.
-                                </span>
-                            </li>
-
-
-                            <li>
-                                <strong>Permits and approvals</strong>
-                                <span>
-                                    Unless stated otherwise, the client is
-                                    responsible for obtaining permits and
-                                    approvals. Any related costs are excluded
-                                    from this quotation.
-                                </span>
-                            </li>
-
-
-                            <li>
-                                <strong>Workmanship warranty</strong>
-                                <span>
-                                    Workmanship is guaranteed for 12 months
-                                    from site handover. Product and material
-                                    guarantees are available on request.
-                                    The warranty excludes normal wear and tear,
-                                    misuse, lack of maintenance, and third-party
-                                    alterations.
-                                </span>
-                            </li>
-
-
-                            <li>
-                                <strong>Damage and liability</strong>
-                                <span>
-                                    The contractor will take reasonable care
-                                    but is not liable for hidden defects or
-                                    structural issues not visible before work
-                                    begins. The client is advised to insure
-                                    the property.
-                                </span>
-                            </li>
-
-
-                            <li>
-                                <strong>Cancellation</strong>
-                                <span>
-                                    Deposits may be non-refundable once
-                                    materials have been purchased or work has
-                                    started. Cancellation must be made in
-                                    writing.
-                                </span>
-                            </li>
-
-
-                            <li>
-                                <strong>Cleanup</strong>
-                                <span>
-                                    Basic site cleanup is included. Full waste
-                                    removal may be quoted separately unless
-                                    specifically included in the scope of work.
-                                </span>
-                            </li>
-
-                        </ol>
-
-
-                        <!-- ACCEPTANCE -->
-
-                        <section class="quote-acceptance" aria-labelledby="acceptance-title">
-
-                            <h3 id="acceptance-title">
-                                Acceptance of quotation
-                            </h3>
-
-                            <p>
-                                I/We hereby accept this quotation and agree to
-                                the terms and conditions stated above. I/We
-                                authorise the contractor to proceed with the
-                                work as specified.
-                            </p>
-
-
-                            <div class="acceptance-fields">
-
-                                <span>
-                                    Client name
-                                </span>
-
-                                <span>
-                                    Company (if applicable)
-                                </span>
-
-                                <span>
-                                    Signature
-                                </span>
-
-                                <span>
-                                    Date
-                                </span>
-
-                                <span>
-                                    Contact number
-                                </span>
-
-                            </div>
-
-                        </section>
-
-                    </section>
-
+                    </div>
                 </div>
 
-            </section>
-
-
-            <!-- =================================================
-                 SAVED QUOTES VIEW
-                 ================================================= -->
-
-            <section id="quotes-view" class="view">
-
-                <div class="view-intro">
-
-                    <div>
-
-                        <span class="eyebrow">
-                            YOUR LOCAL ARCHIVE
-                        </span>
-
-                        <h2>
-                            Saved quotes
-                        </h2>
-
+                <!-- ALUMINIUM FRAME -->
+                <div class="section-card">
+                    <div class="section-card-header">
+                        <h3>Aluminium Frame</h3>
                     </div>
-
-
-                    <div class="view-intro-actions">
-
-                        <button class="primary-button compact" id="export-quotes-button" type="button">
-                            Save to file
-                        </button>
-
-                        <button class="primary-button compact" id="import-quotes-button" type="button">
-                            Load from file
-                        </button>
-
-                        <button class="primary-button compact" id="google-signin-button" type="button">
-                            Sign in to Google
-                        </button>
-
-                        <button class="primary-button compact" id="drive-save-button" type="button" hidden>
-                            Save to Drive
-                        </button>
-
-                        <button class="primary-button compact" id="drive-load-button" type="button" hidden>
-                            Load from Drive
-                        </button>
-
-                        <button class="primary-button compact" id="new-quote-button" type="button">
-                            + New quote
-                        </button>
-
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="frameColour">Frame Colour *</label>
+                            <select id="frameColour" name="frameColour" required>
+                                <option value="">Select frame colour</option>
+                                <option value="Natural">Natural Aluminium</option>
+                                <option value="Clear Anodised">Clear Anodised</option>
+                                <option value="Bronze">Bronze</option>
+                                <option value="Charcoal">Charcoal</option>
+                                <option value="Black">Black</option>
+                                <option value="White">White</option>
+                                <option value="Dark Bronze">Dark Bronze</option>
+                                <option value="Custom">Custom</option>
+                            </select>
+                        </div>
+                        <div class="form-group" id="customColourGroup" hidden>
+                            <label for="customFrameColour">Custom Frame Colour</label>
+                            <input type="text" id="customFrameColour" name="customFrameColour"
+                                placeholder="Colour name / code">
+                        </div>
+                        <div class="form-group">
+                            <label for="frameSeries">Frame Series / Profile</label>
+                            <input type="text" id="frameSeries" name="frameSeries" placeholder="e.g. Series 38">
+                        </div>
                     </div>
-
                 </div>
 
-                <p class="drive-status" id="drive-status" style="margin: 0 0 12px; font-size: 13px; opacity: .7;"></p>
-
-                <input type="file" id="import-quotes-file" accept="application/json,.json" hidden>
-
-
-                <div id="saved-quotes" class="saved-quotes"></div>
-
-            </section>
-
-
-            <!-- =================================================
-                 COMPANY SETTINGS VIEW
-                 ================================================= -->
-
-            <section id="settings-view" class="view">
-
-                <div class="view-intro">
-
-                    <div>
-
-                        <span class="eyebrow">
-                            BUSINESS PROFILE
-                        </span>
-
-                        <h2>
-                            Company settings
-                        </h2>
-
+                <!-- GLASS -->
+                <div class="section-card">
+                    <div class="section-card-header">
+                        <h3>Glass</h3>
                     </div>
-
-
-                    <button class="primary-button compact" id="save-settings" type="button">
-                        Save settings
-                    </button>
-
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="glassType">Glass Type</label>
+                            <select id="glassType" name="glassType">
+                                <option value="">Select glass type</option>
+                                <option value="Clear">Clear</option>
+                                <option value="Tinted">Tinted</option>
+                                <option value="Obscure">Obscure</option>
+                                <option value="Laminated">Laminated</option>
+                                <option value="Toughened">Toughened</option>
+                                <option value="Double Glazed">Double Glazed</option>
+                                <option value="Low-E">Low-E</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="glassThickness">Glass Thickness</label>
+                            <input type="text" id="glassThickness" name="glassThickness" placeholder="e.g. 6mm">
+                        </div>
+                    </div>
                 </div>
 
-
-                <div class="settings-panel">
-
-                    <label class="field">
-
-                        <span>
-                            Company name
-                        </span>
-
-                        <input id="company-name" type="text" placeholder="Your plumbing business">
-
-                    </label>
-
-
-                    <label class="field">
-
-                        <span>
-                            Phone number
-                        </span>
-
-                        <input id="company-phone" type="tel" placeholder="011 000 0000">
-
-                    </label>
-
-
-                    <label class="field">
-
-                        <span>
-                            Email address
-                        </span>
-
-                        <input id="company-email" type="email" placeholder="hello@yourbusiness.co.za">
-
-                    </label>
-
-
-                    <label class="field">
-
-                        <span>
-                            VAT rate (%)
-                        </span>
-
-                        <input id="vat-rate" type="number" min="0" max="100" step="0.5" value="15">
-
-                    </label>
-
-
-                    <label class="field">
-
-                        <span>
-                            Prepared by
-                        </span>
-
-                        <input id="prepared-by" type="text" placeholder="Cheyenne">
-
-                    </label>
-
-
-                    <label class="field">
-
-                        <span>
-                            Tax reference
-                        </span>
-
-                        <input id="tax-number" type="text" placeholder="105 976 616">
-
-                    </label>
-
-                </div>
-
-            </section>
-
-
-            <!-- =================================================
-                 PRICE LIST VIEW
-                 ================================================= -->
-
-            <section id="price-list-view" class="view">
-
-                <div class="view-intro">
-
-                    <div>
-
-                        <span class="eyebrow">
-                            MASTER PRICING
-                        </span>
-
-                        <h2>
-                            Price list
-                        </h2>
-
-                        <p class="view-note">
-                            Update the contractor rates used by services
-                            and job scenarios.
-                        </p>
-
+                <!-- PHOTO -->
+                <div class="section-card">
+                    <div class="section-card-header">
+                        <h3>Window Photo</h3>
                     </div>
-
-
-                    <div class="price-list-actions">
-
-                        <button class="secondary-button compact add-price-button" id="add-price" type="button">
-                            + Add price
-                        </button>
-
-
-                        <label class="import-price-button">
-
-                            Import Excel
-
-                            <input id="price-list-file-page" type="file" accept=".xlsx,.xls"
-                                aria-label="Import Excel price list">
-
+                    <div class="photo-upload-area">
+                        <label for="windowPhoto" class="photo-upload-button">
+                            <span>📷</span>
+                            <strong>Take / Upload Photo</strong>
+                            <small>Photograph the opening before production.</small>
                         </label>
-
-
-                        <button class="primary-button compact" id="save-price-list" type="button">
-                            Save prices
-                        </button>
-
+                        <input type="file" id="windowPhoto" name="windowPhoto" accept="image/*" capture="environment"
+                            hidden>
+                        <div id="photoPreview" class="photo-preview"></div>
                     </div>
-
                 </div>
 
-
-                <div class="price-list-toolbar">
-
-                    <input id="price-list-search" type="search" placeholder="Search items..."
-                        aria-label="Search price list">
-
-                    <span id="price-list-count"></span>
-
+                <!-- NOTES -->
+                <div class="section-card">
+                    <div class="section-card-header">
+                        <h3>Workshop Notes</h3>
+                    </div>
+                    <div class="form-group">
+                        <label for="notes">Notes / Special Instructions</label>
+                        <textarea id="notes" name="notes" rows="5"
+                            placeholder="Enter any information the workshop needs..."></textarea>
+                    </div>
                 </div>
 
-
-                <div class="price-list-table-wrap">
-
-                    <table class="price-list-table">
-
-                        <thead>
-
-                            <tr>
-
-                                <th>
-                                    Category
-                                </th>
-
-                                <th>
-                                    Type / unit
-                                </th>
-
-                                <th>
-                                    Line item
-                                </th>
-
-                                <th>
-                                    Price (ZAR)
-                                </th>
-
-                                <th></th>
-
-                            </tr>
-
-                        </thead>
-
-
-                        <tbody id="price-list-body"></tbody>
-
-                    </table>
-
+                <!-- FORM ACTIONS -->
+                <div class="form-actions">
+                    <button type="button" class="secondary-button" id="cancelWindowButton">Cancel</button>
+                    <button type="submit" class="primary-button">Save Window & Create QR</button>
                 </div>
+            </form>
+        </section>
 
-            </section>
-
-
-            <!-- =================================================
-                 SCENARIOS VIEW
-                 ================================================= -->
-
-            <section id="scenarios-view" class="view">
-
-                <div class="view-intro">
-
-                    <div>
-
-                        <span class="eyebrow">
-                            SCENARIO TEMPLATES
-                        </span>
-
-                        <h2>
-                            Scenarios
-                        </h2>
-
-                        <p class="view-note">
-                            Choose a job scenario to edit the services
-                            added to a quote.
-                        </p>
-
-                    </div>
-
-
-                    <div class="price-list-actions">
-
-                        <button class="secondary-button compact" id="new-scenario" type="button">
-                            + New scenario
-                        </button>
-
-
-                        <button class="secondary-button compact" id="add-scenario-service" type="button">
-                            + Add service
-                        </button>
-
-
-                        <button class="primary-button compact" id="save-scenario" type="button">
-                            Save scenario
-                        </button>
-
-                    </div>
-
+        <!-- WINDOWS LIST VIEW -->
+        <section id="windows-view" class="app-view">
+            <div class="page-header">
+                <div>
+                    <h2>Windows</h2>
+                    <p>View and manage all measured windows and doors.</p>
                 </div>
+                <button type="button" class="primary-button" id="windowsNewButton">+ New Window</button>
+            </div>
 
-
-                <div class="scenario-editor">
-
-                    <label class="field scenario-editor-select">
-
-                        <span>
-                            Job scenario
-                        </span>
-
-                        <select id="scenario-editor-select" aria-label="Scenario to edit"></select>
-
-                    </label>
-
-
-                    <div class="scenario-service-headings" aria-hidden="true">
-
-                        <span>Category</span>
-                        <span>Task</span>
-                        <span>Unit</span>
-                        <span>Qty</span>
-                        <span>Rate</span>
-                        <span>Total</span>
-                        <span></span>
-
-                    </div>
-
-
-                    <div class="scenario-editor-list" id="scenario-editor-list"></div>
-
-
-                    <div class="material-empty" id="scenario-editor-empty">
-                        Select a scenario to edit its linked services.
-                    </div>
-
+            <div class="section-card">
+                <div class="window-filter-bar">
+                    <input type="search" id="windowSearch" placeholder="Search project, customer or window...">
+                    <select id="statusFilter">
+                        <option value="all">All Statuses</option>
+                        <option value="Measured">Measured</option>
+                        <option value="In Production">In Production</option>
+                        <option value="Frame Manufactured">Frame Manufactured</option>
+                        <option value="Glazed">Glazed</option>
+                        <option value="Quality Checked">Quality Checked</option>
+                        <option value="Ready for Installation">Ready for Installation</option>
+                        <option value="Installed">Installed</option>
+                        <option value="Completed">Completed</option>
+                    </select>
                 </div>
+                <div id="windowsList" class="window-list"></div>
+            </div>
+        </section>
 
-            </section>
+        <!-- QR SCANNER VIEW -->
+        <section id="scanner-view" class="app-view">
+            <div class="page-header">
+                <div>
+                    <h2>Scan Window QR Code</h2>
+                    <p>Scan the QR code on the workshop worksheet to open the window production record.</p>
+                </div>
+            </div>
 
-        </main>
+            <div class="scanner-layout">
+                <div class="section-card scanner-card">
+                    <div id="qr-reader" class="qr-reader"></div>
+                    <button type="button" id="startScannerButton" class="primary-button">Start Camera</button>
+                    <button type="button" id="stopScannerButton" class="secondary-button" hidden>Stop Camera</button>
+                    <p id="scannerMessage" class="scanner-message">Scan a window QR code to continue.</p>
+                </div>
+                <div id="scannedWindow" class="section-card scanned-window-card">
+                    <div class="empty-state">
+                        <h3>No Window Selected</h3>
+                        <p>Scan a QR code to view the window.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
 
+        <!-- EMPLOYEES VIEW -->
+        <section id="employees-view" class="app-view">
+            <div class="page-header">
+                <div>
+                    <h2>Workshop Employees</h2>
+                    <p>Manage the people who manufacture and process the windows.</p>
+                </div>
+            </div>
+
+            <div class="section-card">
+                <div class="section-card-header">
+                    <h3>Add Employee</h3>
+                </div>
+                <form id="employeeForm">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="employeeName">Employee Name *</label>
+                            <input type="text" id="employeeName" name="employeeName" placeholder="Full name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="employeeNumber">Employee Number</label>
+                            <input type="text" id="employeeNumber" name="employeeNumber" placeholder="Employee number">
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="primary-button">Add Employee</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="section-card">
+                <div class="section-card-header">
+                    <h3>Employees</h3>
+                </div>
+                <div id="employeesList" class="employee-list"></div>
+            </div>
+        </section>
+    </main>
+
+    <!-- WINDOW DETAILS MODAL -->
+    <div id="windowModal" class="modal" aria-hidden="true">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalWindowTitle">Window Details</h2>
+                <button type="button" class="modal-close" id="closeWindowModal" aria-label="Close">×</button>
+            </div>
+            <div id="modalWindowContent" class="modal-body"></div>
+        </div>
     </div>
 
-
-    <!-- =========================================================
-         NEW SCENARIO DIALOG
-         ========================================================= -->
-
-    <dialog class="scenario-dialog" id="scenario-dialog" aria-labelledby="scenario-dialog-title">
-
-        <form id="scenario-form">
-
-            <h2 id="scenario-dialog-title">
-                New scenario
-            </h2>
-
-
-            <label class="field">
-
-                <span>
-                    Scenario name
-                </span>
-
-                <input id="new-scenario-name" type="text" maxlength="80" placeholder="e.g. Install shopfront glass"
-                    required>
-
-            </label>
-
-
-            <div class="scenario-dialog-actions">
-
-                <button class="secondary-button compact" type="button" id="cancel-scenario">
-                    Cancel
-                </button>
-
-
-                <button class="primary-button compact" type="submit">
-                    Create scenario
-                </button>
-
+    <!-- PRINTABLE WORKSHEET -->
+    <div id="printWorksheet" class="print-only">
+        <div class="print-header">
+            <div>
+                <h1>AGA</h1>
+                <h2>Architectural Glass & Aluminium</h2>
             </div>
+            <div class="print-qr">
+                <div id="printQRCode"></div>
+                <span>Scan to update production</span>
+            </div>
+        </div>
 
-        </form>
+        <div class="print-title">
+            <h2>WINDOW / DOOR MANUFACTURING WORKSHEET</h2>
+            <strong id="printWindowId">AGA-WIN-000000</strong>
+        </div>
 
-    </dialog>
+        <table class="print-details-table">
+            <tr>
+                <th>Project</th>
+                <td id="printProjectName"></td>
+                <th>Customer</th>
+                <td id="printCustomerName"></td>
+            </tr>
+            <tr>
+                <th>Location</th>
+                <td id="printLocation"></td>
+                <th>Window Type</th>
+                <td id="printWindowType"></td>
+            </tr>
+            <tr>
+                <th>Frame Colour</th>
+                <td id="printFrameColour"></td>
+                <th>Frame Series</th>
+                <td id="printFrameSeries"></td>
+            </tr>
+            <tr>
+                <th>Width</th>
+                <td id="printWidth"></td>
+                <th>Height</th>
+                <td id="printHeight"></td>
+            </tr>
+            <tr>
+                <th>Glass</th>
+                <td id="printGlassType"></td>
+                <th>Thickness</th>
+                <td id="printGlassThickness"></td>
+            </tr>
+        </table>
 
+        <div class="print-photo-area">
+            <h3>Opening Photo</h3>
+            <img id="printPhoto" src="" alt="Window opening">
+        </div>
 
-    <!-- =========================================================
-         TOAST
-         ========================================================= -->
+        <div class="print-measurements">
+            <h3>Site Measurements</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Measurement</th>
+                        <th>Top / Left</th>
+                        <th>Middle</th>
+                        <th>Bottom / Right</th>
+                        <th>Final</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th>Width</th>
+                        <td id="printWidthTop"></td>
+                        <td id="printWidthMiddle"></td>
+                        <td id="printWidthBottom"></td>
+                        <td id="printFinalWidth"></td>
+                    </tr>
+                    <tr>
+                        <th>Height</th>
+                        <td id="printHeightLeft"></td>
+                        <td id="printHeightMiddle"></td>
+                        <td id="printHeightRight"></td>
+                        <td id="printFinalHeight"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
 
-    <div class="toast" id="toast" role="status"></div>
+        <div class="print-notes">
+            <h3>Workshop Notes</h3>
+            <div id="printNotes"></div>
+        </div>
 
+        <div class="print-production">
+            <h3>Production Tracking</h3>
+            <table>
+                <tr>
+                    <th>Status</th>
+                    <td id="printStatus">Measured</td>
+                    <th>Date</th>
+                    <td id="printDate"></td>
+                </tr>
+                <tr>
+                    <th>Manufactured By</th>
+                    <td id="printManufacturer"></td>
+                    <th>Employee</th>
+                    <td id="printEmployee"></td>
+                </tr>
+            </table>
+        </div>
 
-    <!-- =========================================================
-         EXCEL / XLSX LIBRARY
-         ========================================================= -->
+        <div class="print-signatures">
+            <div>
+                <strong>Manufactured By</strong>
+                <div class="signature-line"></div>
+            </div>
+            <div>
+                <strong>Quality Checked By</strong>
+                <div class="signature-line"></div>
+            </div>
+            <div>
+                <strong>Date</strong>
+                <div class="signature-line"></div>
+            </div>
+        </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+        <div class="print-footer">
+            <strong>AGA Architectural Glass & Aluminium</strong>
+            <span>010 597 6616</span>
+            <span>info@agasouthafrica.co.za</span>
+        </div>
+    </div>
 
+    <!-- NOTIFICATION TOAST -->
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
-    <!-- =========================================================
-         APS APPLICATION
-         ========================================================= -->
-
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
-
+    <!-- SCRIPTS -->
+    <script src="email.js"></script>
     <script src="app.js"></script>
-
-
-    <!-- =========================================================
-         SERVICE WORKER
-
-         The service worker is only registered when the application
-         is running through HTTP or HTTPS.
-
-         This prevents errors when index.html is opened directly
-         from Windows/File Explorer using file://
-         ========================================================= -->
-
-    <script>
-
-        if ('serviceWorker' in navigator && window.isSecureContext) {
-            window.addEventListener('load', async () => {
-                try {
-                    const registration = await navigator.serviceWorker.register('./service-worker.js');
-                    console.log('Pipewise service worker registered:', registration.scope);
-                } catch (error) {
-                    console.error('Pipewise service worker registration failed:', error);
-                }
-            });
-        } else {
-            console.log('Pipewise service worker skipped: page is not running in a secure context.');
-        }
-
-
-    </script>
-
 </body>
 
 </html>
